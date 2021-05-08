@@ -250,7 +250,7 @@ for single_PE in all_PE:
         print("      output_channel: ", single_task.output_channel)
         print("      output_op:", single_task.output_to)
         for task_output_channel in single_task.output_channel:
-            single_PE.channel_in[task_output]
+            single_PE.channel_in[task_output_channel]
         if len(single_PE.task_list) == 1: 
             if single_task.task_type == "route":
                 # only one task, means predeicate = XXXXXXXX
