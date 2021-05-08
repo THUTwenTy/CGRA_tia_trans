@@ -13,7 +13,12 @@ File_log.close()
 
 File_graph = open("graph_reg.dot", mode = "r")
 raw_graph_lines = File_graph.readlines()
-File_graph.close()    
+File_graph.close()
+
+def find_ralated_neighbor_task(PE_no, task_no, output_channel_no):
+    #next_PE_no = base.derive_PE_neighbor(PE_no, all_PE[PE_no])
+    for single_task_next_PE in all_PE[next_PE_no].task_list:
+        if single_task.
 
 # deal with raw log file
 Operation_Mapping_Result = []
@@ -250,7 +255,10 @@ for single_PE in all_PE:
         print("      output_channel: ", single_task.output_channel)
         print("      output_op:", single_task.output_to)
         for task_output_channel in single_task.output_channel:
-            single_PE.channel_in[task_output_channel]
+            single_channel_out = single_PE.channel_out[task_output_channel]
+            if single_channel_out >= 0: # -2 means inside
+                single_channel_out.assign_channel_tag(single_task, single_task.output_channel.index(task_output_channel))
+                single_task
         if len(single_PE.task_list) == 1: 
             if single_task.task_type == "route":
                 # only one task, means predeicate = XXXXXXXX
