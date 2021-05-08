@@ -192,14 +192,14 @@ for single_route in all_Route:
             task_existed_flag = 0
             for single_task in all_PE[single_route_end_PE_no].task_list:
                 if single_route.op_to == single_task.op_no: # task already existed, add edge
-                    single_task.add_input(start_NESW, single_route.edge.edge_attribute[0], single_route.op_from)
+                    single_task.add_input(end_NESW, single_route.edge.edge_attribute[0], single_route.op_from)
                     if len(single_route.edge.edge_attribute) > 1: # have br attribute
                         single_task.add_br_attribute(single_route.edge.edge_attribute[1])
                     print("PE", single_route_end_PE_no, " task", single_task.task_no, " existed, op:", single_task.op_no)
                     task_existed_flag = 1
             if task_existed_flag == 0: # task not exist, create new one
                 all_PE[single_route_end_PE_no].add_task(single_route.op_to, "place")
-                all_PE[single_route_end_PE_no].task_list[-1].add_input(start_NESW, single_route.edge.edge_attribute[0], single_route.op_from)
+                all_PE[single_route_end_PE_no].task_list[-1].add_input(end_NESW, single_route.edge.edge_attribute[0], single_route.op_from)
                 print("create PE", single_route_end_PE_no, " op:", all_PE[single_route_end_PE_no].task_list[-1].op_no)
                 if len(single_route.edge.edge_attribute) > 1: # have br attribute
                     single_task.add_br_attribute(single_route.edge.edge_attribute[1])
@@ -249,10 +249,12 @@ for single_PE in all_PE:
         print("      input_op:", single_task.input_from)
         print("      output_channel: ", single_task.output_channel)
         print("      output_op:", single_task.output_to)
+        for task_output in single_task.output_channel:
+            single_PE.
         if len(single_PE.task_list) == 1: 
-            # only one task, means predeicate = XXXXXXXX
-            now_state = single_PE.add_state(0, "XXXXXXXX")
             if single_task.task_type == "route":
+                # only one task, means predeicate = XXXXXXXX
+                now_state = single_PE.add_state(0, "XXXXXXXX")
                 # add route state
                 now_state.add_state_operation("mov")
                 trigger_input = [single_task.input_channel[0], single_task.input_channel_tag[0]]
@@ -274,10 +276,20 @@ for single_PE in all_PE:
                             # needs to update corresponding state
                             all_PE[next_PE_no].state_list[single_task_next_PE.corresponding_state_no]\
                                 .modify_channel_tag(single_task_next_PE.)
-                        '''
+                        
+                # add halt state
+                halt_state = single_PE.add_state(1, "XXXXXXXX")
+                now_state.add_state_operation("halt")
+                trigger_input = [single_task.input_channel[0], single_task]
             else: # single_task.task_type == "place"
-                corresponding_operation = all_PE[single_task.op_no].
-                if all_PE[single_task.op_no].
+                state_operation = all_Op[single_task.op_no].corresponding_operation
+                if state_operation[0] in base.base_number: # const
+                    continue
+                elif: state_operation == "phi": # needs two state
+                    now_state = single_PE.add_state(0, "0")
+                    next_state = single_PE.add_state(0, )
+                    '''
+
                 
 
 # fprint

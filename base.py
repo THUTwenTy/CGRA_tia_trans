@@ -17,7 +17,7 @@ Op_trans_dir = {"add": "add",
                 "output": "output",
                 "phi": "phi",
                 "comb": "comb",
-                "load": "load"
+                "load": "mov"
                 }
 # load, store, comb, phi operation needs extra transform function
 
@@ -73,16 +73,17 @@ channel_match = {   0:2,
 # channels in PE
 class PE_channel:
 
-    def __init__(self, PE_index, PE_NESW):
+    def __init__(self, PE_index, PE_NESW, in_or_out):
         self.PE_NESW = PE_NESW
         self.PE_index = PE_index
-        self.tag_for_state = []
+        self.tag_for_task = []
         self.halt_tag_in = 1
+        self.in_or_out = in_or_out
         self.halt_tag_out = len(self.tag_for_state) + 1
         #print("PE_" + str(PE_index) + "_channel_" + str(PE_NESW), "initialized")
 
-    def add_state_reg(self, state_no):
-        self.tag_for_state.append = state_no
+    def assign_channel_tag(self, task_no, operand_no):
+        self.tag_for_state.append = [task_no, operand_no]
         self.halt_state_out = len(self.tag_for_state) + 1
     
     def add_halt_tag_in(self, halt_tag_in):
@@ -92,9 +93,13 @@ class PE():
 
     def __init__(self, PE_index):
         self.index = PE_index
-        self.channel = [PE_channel(PE_index, 0), PE_channel(PE_index, 1), PE_channel(PE_index, 2), PE_channel(PE_index, 3)]
+        self.channel_in = []
+        self.channel_out = []
+        self.data_reg_used_for = []
+        for i in range(4):
+            self.channe_in.append(PE_channel(PE_index, i, "in"))
+            self.channe_out.append(PE_channel(PE_index, i, "out"))
         self.predicate_reg_unused = [0,0,0,0,0,0,0,0]
-        self.data_reg = [0,0,0,0,0,0,0,0]
         self.halt_state = 0
         self.inside_ops = []
         self.inside_route = []
@@ -119,11 +124,13 @@ class PE():
         state_no = len(self.state_list)
         if special_predicate == "0": # means normal predicate
             trigger_predicate = self.predicate_list_to_str_trans(self.predicate_reg_unused)
-            self.predicate_reg_unused = self.list_8bit_next(self.predicate_reg_unused)
             self.state_list.append(PE_state(state_no, trigger_predicate, halt_flag))
         else:
             self.state_list.append(PE_state(state_no, special_predicate, halt_flag))
         return self.state_list[-1]
+    
+    def get_new_predicate():
+        self.predicate_reg_unused = self.list_8bit_next(self.predicate_reg_unused)
 
     def File_PE_name(self):
         return "<processing_element_" + str(self.index) + ">\n"

@@ -32,7 +32,6 @@
 <processing_element_8>
 
 <processing_element_9>
-    when %p == XXXXXXXX         
 
 <processing_element_10>
     # PE unused
@@ -45,7 +44,6 @@
         halt;
 
 <processing_element_12>
-    when %p == XXXXXXXX         
 
 <processing_element_13>
 
