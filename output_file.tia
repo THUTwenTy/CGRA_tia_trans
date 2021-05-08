@@ -1,0 +1,61 @@
+<processing_element_0>
+
+<processing_element_1>
+
+<processing_element_2>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_3>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_4>
+
+<processing_element_5>
+    # task 0 route op_6
+    when %p == XXXXXXXX with %i0.0:
+        mov %o2.0, %i0; deq %i0;
+
+<processing_element_6>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_7>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_8>
+
+<processing_element_9>
+    when %p == XXXXXXXX         
+
+<processing_element_10>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_11>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_12>
+    when %p == XXXXXXXX         
+
+<processing_element_13>
+
+<processing_element_14>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_15>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+

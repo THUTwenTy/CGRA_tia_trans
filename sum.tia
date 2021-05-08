@@ -1,0 +1,74 @@
+<processing_element_0>
+    # task 0 place op_0
+    # task 1 place op_1
+
+<processing_element_1>
+    # task 0 place op_4
+    # task 1 place op_6
+    # task 2 place op_5
+
+<processing_element_2>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_3>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_4>
+    # task 0 place op_8
+    # task 1 place op_16
+    # task 2 place op_9
+
+<processing_element_5>
+    # task 0 route op_6
+
+<processing_element_6>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_7>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_8>
+    # task 0 route op_7
+    # task 1 place op_10
+    # task 2 place op_11
+
+<processing_element_9>
+    # task 0 place op_7
+
+<processing_element_10>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_11>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_12>
+    # task 0 place op_15
+
+<processing_element_13>
+    # task 0 place op_2
+    # task 1 place op_12
+    # task 2 place op_3
+    # task 3 place op_13
+
+<processing_element_14>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_15>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+

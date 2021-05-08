@@ -1,0 +1,39 @@
+digraph G {
+phi0[opcode=phi];
+const1[opcode=const][value=0];
+phi2[opcode=phi];
+const3[opcode=const][value=0];
+mul4[opcode=mul];
+const5[opcode=const][value=1];
+load6[opcode=load];
+add7[opcode=add];
+add8[opcode=add];
+const9[opcode=const][value=1];
+icmp10[opcode=icmp][predicate=eq];
+const11[opcode=const][value=10];
+add12[opcode=add];
+const13[opcode=const][value=1];
+output14[opcode=output];
+comb15[opcode=comb];
+comb16[opcode=comb];
+phi0->mul4[operand=1]; //phi->gep_mul
+phi0->add8[operand=0]; //phi->add
+phi2->add7[operand=1]; //phi->add
+load6->add7[operand=0]; //load->add
+comb15->phi2[operand=0]; //comb->phi
+add7->comb15[operand=1]; //add->comb
+add8->icmp10[operand=0]; //add->icmp
+add8->comb16[operand=1]; //add->comb
+icmp10->comb15[operand=0][br=T]; //icmp->comb
+icmp10->comb16[operand=0][br=F]; //icmp->comb
+add12->output14[operand=0]; //add->output
+const1->phi0[operand=1]; //const->phi
+const3->phi2[operand=1]; //const->phi
+const5->mul4[operand=0]; //gep_const->gep_mul
+mul4->load6[operand=0]; //gep_mul->load
+const9->add8[operand=1]; //const->add
+const11->icmp10[operand=1]; //const->icmp
+const13->add12[operand=1]; //const->add
+comb15->add12[operand=0]; //comb->add
+comb16->phi0[operand=0]; //comb->phi
+}
