@@ -79,13 +79,13 @@ class PE_channel:
         self.tag_for_task = []
         self.halt_tag_in = 1
         self.in_or_out = in_or_out
-        self.halt_tag_out = len(self.tag_for_state) + 1
+        #self.halt_tag_out = len(self.tag_for_state) + 1
         #print("PE_" + str(PE_index) + "_channel_" + str(PE_NESW), "initialized")
 
     # if add for output_channel, return new tag; if for input_channel, means nothing
     def assign_channel_tag(self, task_no, operand_no):
-        self.tag_for_state.append([task_no, operand_no])
-        self.halt_state_out = len(self.tag_for_state) + 1
+        self.tag_for_task.append([task_no, operand_no])
+        #self.halt_state_out = len(self.tag_for_state) + 1
         return len(self.tag_for_task) - 1
     
     def add_halt_tag_in(self, halt_tag_in):
@@ -99,8 +99,8 @@ class PE():
         self.channel_out = []
         self.data_reg_used_for = []
         for i in range(4):
-            self.channe_in.append(PE_channel(PE_index, i, "in"))
-            self.channe_out.append(PE_channel(PE_index, i, "out"))
+            self.channel_in.append(PE_channel(PE_index, i, "in"))
+            self.channel_out.append(PE_channel(PE_index, i, "out"))
         self.predicate_reg_unused = [0,0,0,0,0,0,0,0]
         self.halt_state = 0
         self.inside_ops = []
@@ -196,10 +196,12 @@ class PE():
             if single_task.task_type == "route":
                 # route task arranged at last
                 new_task_list[self.op_num+i] = single_task
+                single_task.task_no = self.op_num+i
                 i = i + 1
             else:
                 target_op_position = self.inside_ops.index(single_task.op_no)
                 new_task_list[target_op_position] = single_task
+                single_task.task_no = target_op_position
         self.task_list = new_task_list
 
     def File_predicate_check_tag(self, pre_state, channel_index, tag):
@@ -320,13 +322,13 @@ class PE_task():
         self_channel = channel_match[channel_from]
         channel_index = self.input_channel.index(self_channel)
         self.input_channel_tag[channel_index] = tag
-        return corresponding_state_no # return state_no to judge whether needs update state or not
+        return self.corresponding_state_no # return state_no to judge whether needs update state or not
     
     def add_output_tag(self, channel_to, tag):
         self_channel = channel_match[channel_to]
         channel_index = self.output_channel.index(self_channel)
         self.output_channel_tag[channel_index] = tag
-        return corresponding_state_no # return state_no to judge whether needs update state or not
+        return self.corresponding_state_no # return state_no to judge whether needs update state or not
 
 class Op_io():
 
