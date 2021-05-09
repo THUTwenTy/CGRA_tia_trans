@@ -15,10 +15,15 @@ File_graph = open("graph_reg.dot", mode = "r")
 raw_graph_lines = File_graph.readlines()
 File_graph.close()
 
-def find_ralated_neighbor_task(PE_no, task_no, output_channel_no):
-    #next_PE_no = base.derive_PE_neighbor(PE_no, all_PE[PE_no])
+def find_ralated_neighbor_task(PE_no, single_task, output_channel):
+    next_PE_no = base.derive_PE_neighbor(PE_no, output_channel)
     for single_task_next_PE in all_PE[next_PE_no].task_list:
-        if single_task.
+        if base.channel_match[output_channel] in single_task_next_PE.input_channel:
+            input_index = single_task_next_PE.input_channel.index(base.channel_match[output_channel])
+            if single_task_next_PE.op_no == single_task.op_no or \
+                single_task_next_PE.input_from[input_index] == single_task.op_no
+                return [next_PE_no, single_task_next_PE, input_index]
+    return [next_PE_no, -1, -1] # no related task
 
 # deal with raw log file
 Operation_Mapping_Result = []
@@ -255,10 +260,19 @@ for single_PE in all_PE:
         print("      output_channel: ", single_task.output_channel)
         print("      output_op:", single_task.output_to)
         for task_output_channel in single_task.output_channel:
-            single_channel_out = single_PE.channel_out[task_output_channel]
-            if single_channel_out >= 0: # -2 means inside
-                single_channel_out.assign_channel_tag(single_task, single_task.output_channel.index(task_output_channel))
-                single_task
+            if task_output_channel >= 0: # -2 means inside
+                single_channel_out = single_PE.channel_out[task_output_channel]
+                # assign new tag
+                channel_tag = single_channel_out.assign_channel_tag(single_task, single_task.output_channel.index(task_output_channel))
+                # find related output task
+                [next_PE_no, single_task_next_PE, input_index] = find_ralated_neighbor_task(single_PE.PE_no, single_task, task_output_channel)
+                single_channel_in = single_task_next_PE.output_channel[input_index]
+                # add tag to this task
+                single_task.add_output_tag(single_channel_in, channel_tag)
+                # assign tag for related output channel
+                all_PE[next_PE_no].channel_in[single_channel_in].assign_channel_tag(single_task_next_PE.task_no, input_index)
+                # add tag to related output task
+                single_task_next_PE.add_input_tag(single_channel_out, channel_tag)
         if len(single_PE.task_list) == 1: 
             if single_task.task_type == "route":
                 # only one task, means predeicate = XXXXXXXX

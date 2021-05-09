@@ -82,9 +82,11 @@ class PE_channel:
         self.halt_tag_out = len(self.tag_for_state) + 1
         #print("PE_" + str(PE_index) + "_channel_" + str(PE_NESW), "initialized")
 
+    # if add for output_channel, return new tag; if for input_channel, means nothing
     def assign_channel_tag(self, task_no, operand_no):
-        self.tag_for_state.append = [task_no, operand_no]
+        self.tag_for_state.append([task_no, operand_no])
         self.halt_state_out = len(self.tag_for_state) + 1
+        return len(self.tag_for_task) - 1
     
     def add_halt_tag_in(self, halt_tag_in):
         self.halt_tag_in = halt_tag_in
@@ -289,7 +291,7 @@ class PE_task():
         self.input_from = [-3, -3]  # op
         self.output_to = []         # op
         self.input_channel_tag = [0, 0] # channel_tag, according to neighbor output channel
-        self.output_channel_tag = []    # channel_tag, according to neighbor input channel
+        self.output_channel_tag = [0, 0]    # channel_tag, according to neighbor input channel
         self.op_no = op_no          # works for which op
         self.task_no = task_no
         self.if_br = ""             # help decide br
@@ -297,6 +299,7 @@ class PE_task():
         self.corresponding_state_no = -3 
         # corresponding_state_no == -3 means haven't been transfered to PE_state
         # corresponding_state_no == -2 means no need to arrange single state
+        # index of input_channel, input_from, input_channel_tag are related, output is the same
 
     def add_input(self, NESW, operand_no, op_from):
         self.input_channel[operand_no] = NESW
