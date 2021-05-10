@@ -270,9 +270,12 @@ class PE_state():
             File_str = File_str + " with %i" + str(self.trigger_input[0])
             if self.trigger_input[1] >= 0:
                 File_str = File_str + "." + str(self.trigger_input[1]) + ":\n"
+        else:
+            File_str = File_str + ":\n"
         File_str = File_str + "        " + self.state_operation + " "
         for i in range(self.operand_num):
             single_operand = self.operand[i]
+            print(single_operand[0])
             if single_operand[0] in ["i", "o", "p", "r"]:
                 File_str = File_str + \
                     "%" + single_operand[0] + str(single_operand[1])

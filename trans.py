@@ -36,9 +36,11 @@ def derive_input_operand(single_PE, single_task, input_index):
     if single_task.input_channel[input_index] < 0: # data from inside
         if all_Op[single_task.input_from[input_index]].corresponding_operation[0] in base.base_number: # data from const
             return ["const", int(all_Op[single_task.input_from[input_index]].corresponding_operation), -1]
-        if [single_task.task_no, input_index] in single_PE.data_reg_used_for:   # data from data_reg
+        elif [single_task.task_no, input_index] in single_PE.data_reg_used_for:   # data from data_reg
             data_index = single_PE.data_reg_used_for.index([single_task.task_no, input_index])
             return ["r", data_index, -1]
+        else:
+            return ["r", 0, -1]
     else: # data to outside
         return ["i", single_task.input_channel[input_index], -1]
 
@@ -331,6 +333,7 @@ for single_PE in all_PE:
             for output_index in range(output_amount):
                 now_state = single_PE.add_state(0, "0")
                 now_state.add_state_operation("mov")
+                print("state_num:", now_state.operand_num)
                 trigger_input = derive_trigger_input(single_PE, single_task, 1)
                 input_operand = derive_input_operand(single_PE, single_task, 1)
                 output_operand = derive_output_operand(single_PE, single_task, output_index)
@@ -357,6 +360,7 @@ for single_PE in all_PE:
             for output_index in range(output_amount):
                 now_state = single_PE.add_state(0, "0")
                 now_state.add_state_operation("mov")
+                print("state_num:", now_state.operand_num)
                 trigger_input = derive_trigger_input(single_PE, single_task, 0)
                 input_operand = derive_input_operand(single_PE, single_task, 0)
                 output_operand = derive_output_operand(single_PE, single_task, output_index)
@@ -378,6 +382,7 @@ for single_PE in all_PE:
 
 # fprint
 for single_PE in all_PE:
+    print("PE:", single_PE.index)
     File_output = File_output + single_PE.File_PE_name()
     if len(single_PE.task_list) == 0: # unused PE
         File_output = File_output + \
