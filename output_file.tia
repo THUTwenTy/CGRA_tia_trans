@@ -1,14 +1,14 @@
 <processing_element_0>
-    # task 1 place op_0
+    # phi0 initial
     when %p == 00000000:
         mov %o1.0, $0; set %p = 00000001;
-    # task 1 place op_0
+    # phi0 initial
     when %p == 00000001:
         mov %o2.0, $0; set %p = 00000010;
-    # task 1 place op_0
+    # phi0 other rounds
     when %p == 00000010 with %i2.0:
         mov %o1.0, %i2; set %p = 00000011;
-    # task 1 place op_0
+    # phi0 other rounds
     when %p == 00000011:
         mov %o2.0, %i2; deq %i2; set %p = 00000010;
 
@@ -27,7 +27,7 @@
 <processing_element_4>
 
 <processing_element_5>
-    # task 0 route op_6
+    # 
     when %p == 00000000 with %i0.0:
         mov %o2.0, %i0.0; deq %i0;
 
@@ -42,7 +42,7 @@
         halt;
 
 <processing_element_8>
-    # task 2 route op_7
+    # 
     when %p == 00000000 with %i1.0:
         mov %o2.1, %i1.0; deq %i1;
 
@@ -61,10 +61,10 @@
 <processing_element_12>
 
 <processing_element_13>
-    # task 2 place op_2
+    # phi2 initial
     when %p == 00000000:
         mov %o0.0, $0; set %p = 00000001;
-    # task 2 place op_2
+    # phi2 other rounds
     when %p == 00000001:
         mov %o0.0, %r0; set %p = 00000001;
 

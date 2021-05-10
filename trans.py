@@ -332,8 +332,8 @@ for single_PE in all_PE:
             output_amount = len(single_task.output_to)
             for output_index in range(output_amount):
                 now_state = single_PE.add_state(0, "0")
+                now_state.add_state_note("phi"+str(single_task.op_no)+" initial")
                 now_state.add_state_operation("mov")
-                print("state_num:", now_state.operand_num)
                 trigger_input = derive_trigger_input(single_PE, single_task, 1)
                 input_operand = derive_input_operand(single_PE, single_task, 1)
                 output_operand = derive_output_operand(single_PE, single_task, output_index)
@@ -359,8 +359,8 @@ for single_PE in all_PE:
             other_rounds_start_state_no = len(single_PE.state_list)
             for output_index in range(output_amount):
                 now_state = single_PE.add_state(0, "0")
+                now_state.add_state_note("phi"+str(single_task.op_no)+" other rounds")
                 now_state.add_state_operation("mov")
-                print("state_num:", now_state.operand_num)
                 trigger_input = derive_trigger_input(single_PE, single_task, 0)
                 input_operand = derive_input_operand(single_PE, single_task, 0)
                 output_operand = derive_output_operand(single_PE, single_task, output_index)
@@ -379,10 +379,11 @@ for single_PE in all_PE:
                         now_state.add_deq_channel(single_task.input_channel[0])
                 else:
                     now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
+        #elif single_task.task_type == "place" and all_Op[single_task.op_no].corresponding_operation == "comb":
+
 
 # fprint
 for single_PE in all_PE:
-    print("PE:", single_PE.index)
     File_output = File_output + single_PE.File_PE_name()
     if len(single_PE.task_list) == 0: # unused PE
         File_output = File_output + \
@@ -394,8 +395,10 @@ for single_PE in all_PE:
             single_task_no = single_state.corresponding_task_no
             if single_task_no >= 0: 
                 single_task = single_PE.task_list[single_task_no]
+                '''
                 File_output = File_output + \
                     "    # task " + str(single_task.task_no) + " " + str(single_task.task_type) + " op_" + str(single_task.op_no) + "\n"
+                '''
             File_output = File_output + single_state.output_str()
 
     File_output = File_output + "\n"

@@ -239,6 +239,10 @@ class PE_state():
         self.halt_flag = halt_flag  # means halt_state or not
         self.deq_channel = -1       # default means no deq statement
         self.corresponding_task_no = -1
+        self.state_note = "# "
+
+    def add_state_note(self, note):
+        self.state_note = self.state_note + note
 
     def add_corresponding_task_no(self, task_no):
         self.corresponding_task_no = task_no
@@ -264,7 +268,8 @@ class PE_state():
         self.operand[operand_no][2] = tag
 
     def output_str(self):
-        File_str = "    when %p == "
+        File_str = "    " + self.state_note + "\n"
+        File_str = File_str + "    when %p == "
         File_str = File_str + self.trigger_predicate
         if self.trigger_input[0] >= 0: # with tag trigger
             File_str = File_str + " with %i" + str(self.trigger_input[0])
@@ -275,7 +280,6 @@ class PE_state():
         File_str = File_str + "        " + self.state_operation + " "
         for i in range(self.operand_num):
             single_operand = self.operand[i]
-            print(single_operand[0])
             if single_operand[0] in ["i", "o", "p", "r"]:
                 File_str = File_str + \
                     "%" + single_operand[0] + str(single_operand[1])
