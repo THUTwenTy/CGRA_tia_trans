@@ -1,5 +1,5 @@
 #!/usr bin/env python3
 
-test = []
-print(test)
+test = "10"
+print(int(test))
 #print(predicate_list[-1])

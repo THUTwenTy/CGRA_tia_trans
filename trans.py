@@ -26,6 +26,32 @@ def find_ralated_neighbor_task(PE_no, single_task, output_channel):
                         return [next_PE_no, single_task_next_PE, input_index]
     return [next_PE_no, -1, -1] # no related task
 
+def derive_trigger_input(single_PE, single_task, input_index):
+    if single_task.input_channel[input_index] < 0: # data from inside
+        return [-1, -1]
+    else:
+        return [single_task.input_channel[input_index], single_task.input_channel_tag[input_index]]
+
+def derive_input_operand(single_PE, single_task, input_index):
+    if single_task.input_channel[input_index] < 0: # data from inside
+        if all_Op[single_task.input_from[input_index]].corresponding_operation[0] in base.base_number: # data from const
+            return ["const", int(all_Op[single_task.input_from[input_index]].corresponding_operation), -1]
+        if [single_task.task_no, input_index] in single_PE.data_reg_used_for:   # data from data_reg
+            data_index = single_PE.data_reg_used_for.index([single_task.task_no, input_index])
+            return ["r", data_index, -1]
+    else: # data to outside
+        return ["i", single_task.input_channel[input_index], -1]
+
+def derive_output_operand(single_PE, single_task, output_index):
+    if single_task.output_channel[output_index] < 0: # data to inside
+        for single_other_task in single_PE.task_list:
+            if single_task.output_to[output_index] == single_other_task.op_no:
+                input_index = single_other_task.input_op.index(single_task.op_no)
+                single_PE.add_data_reg(single_other_task.task_no, input_index)
+                return ["r", len(single_PE.data_reg_used_for), -1]
+    else: # data to outside
+        return ["o", single_task.output_channel[output_index], single_task.output_channel_tag[output_index]]
+
 # deal with raw log file
 Operation_Mapping_Result = []
 Operation_Mapping_Result_tag = 0
@@ -295,12 +321,61 @@ for single_PE in all_PE:
             now_state.add_trigger_input(trigger_input)
             now_state.add_operand(["i", single_task.input_channel[0], single_task.input_channel_tag[0]], 1)
             now_state.add_operand(["o", single_task.output_channel[0], single_task.output_channel_tag[0]], 0)
+            # deq input
+            now_state.add_deq_channel(single_task.input_channel[0])
             # bind task and state
             now_state.add_corresponding_task_no(single_task.task_no)
             single_task.update_state_no(now_state.state_no)
-        elif single_task.task_type == "place" and 
+        elif single_task.task_type == "place" and all_Op[single_task.op_no].corresponding_operation == "phi":
+            output_amount = len(single_task.output_to)
+            for output_index in range(output_amount):
+                now_state = single_PE.add_state(0, "0")
+                now_state.add_state_operation("mov")
+                trigger_input = derive_trigger_input(single_PE, single_task, 1)
+                input_operand = derive_input_operand(single_PE, single_task, 1)
+                output_operand = derive_output_operand(single_PE, single_task, output_index)
+                # first one have input tag
+                if output_index == 0:
+                    now_state.add_trigger_input(trigger_input)
+                else:
+                    now_state.add_trigger_input([-1, -1])
+                # add operand
+                now_state.add_operand(input_operand, 1)
+                now_state.add_operand(output_operand, 0)
+                # update base predicate and apply new predicate_unused
+                single_PE.update_base_predicate("0")
+                single_PE.get_new_predicate_unused()
+                now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
+                # bind task and state
+                now_state.add_corresponding_task_no(single_task.task_no)
+                single_task.update_state_no(now_state.state_no)
+                # last one have deq attribute
+                if output_index == output_amount - 1:
+                    if single_task.input_channel[1] >= 0: # input from outside
+                        now_state.add_deq_channel(single_task.input_channel[1])
+            other_rounds_start_state_no = len(single_PE.state_list)
+            for output_index in range(output_amount):
+                now_state = single_PE.add_state(0, "0")
+                now_state.add_state_operation("mov")
+                trigger_input = derive_trigger_input(single_PE, single_task, 0)
+                input_operand = derive_input_operand(single_PE, single_task, 0)
+                output_operand = derive_output_operand(single_PE, single_task, output_index)
+                if output_index == 0:
+                    now_state.add_trigger_input(trigger_input)
+                else:
+                    now_state.add_trigger_input([-1, -1])
+                now_state.add_operand(input_operand, 1)
+                now_state.add_operand(output_operand, 0)
+                single_PE.get_new_predicate_unused()
+                now_state.add_corresponding_task_no(single_task.task_no)
+                single_task.update_state_no(now_state.state_no)
+                if output_index == output_amount - 1:
+                    now_state.add_next_state_no(other_rounds_start_state_no, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
+                    if single_task.input_channel[0] >= 0:
+                        now_state.add_deq_channel(single_task.input_channel[0])
+                else:
+                    now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
 
-                
 # fprint
 for single_PE in all_PE:
     File_output = File_output + single_PE.File_PE_name()

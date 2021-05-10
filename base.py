@@ -110,6 +110,9 @@ class PE():
         self.task_list = []
         self.state_list = []
 
+    def add_data_reg(self, task_no, operand_no):
+        self.data_reg_used_for.append(task, operand_no)
+
     def update_base_predicate(self, special_predicate):
         if special_predicate == "0": # base_predicate++
             self.base_predicate = self.list_8bit_next(self.base_predicate)
@@ -138,7 +141,7 @@ class PE():
             self.state_list.append(PE_state(state_no, special_predicate, halt_flag))
         return self.state_list[-1]
     
-    def get_new_predicate():
+    def get_new_predicate_unused(self):
         self.predicate_reg_unused = self.list_8bit_next(self.predicate_reg_unused)
 
     def File_PE_name(self):
@@ -225,7 +228,9 @@ class PE_state():
         self.state_no = state_no
         # [0] -> channel_no, [1] -> trigger_tag, -1 stands for default
         self.trigger_input = [-1, -1]
-        # "unused" "i" "o" "const"
+        # [0] -> "unused" "i" "o" "r" "p" "const"
+        # [1] -> channel_no
+        # [2] -> channel_tag 
         self.operand = [["unused", -1, -1], ["unused", -1, -1], ["unused", -1, -1]]
         self.state_operation = ""
         self.next_state_no = -1     # default means no next state
@@ -268,7 +273,7 @@ class PE_state():
         File_str = File_str + "        " + self.state_operation + " "
         for i in range(self.operand_num):
             single_operand = self.operand[i]
-            if single_operand[0] in ["i", "o"]:
+            if single_operand[0] in ["i", "o", "p", "r"]:
                 File_str = File_str + \
                     "%" + single_operand[0] + str(single_operand[1])
                 if single_operand[2] >= 0: # with tag
@@ -305,7 +310,7 @@ class PE_task():
         self.task_no = task_no
         self.if_br = ""             # help decide br
         self.task_type = task_type  # "route" or "place"
-        self.corresponding_state_no = -3 
+        self.corresponding_state_no = [] 
         # corresponding_state_no == -3 means haven't been transfered to PE_state
         # corresponding_state_no == -2 means no need to arrange single state
         # index of input_channel, input_from, input_channel_tag are related, output is the same
@@ -326,7 +331,7 @@ class PE_task():
         self.if_br = br_attribute
     
     def update_state_no(self, state_no):
-        self.corresponding_state_no = state_no
+        self.corresponding_state_no.append(state_no)
 
     def add_input_tag(self, input_index, tag):
         self.input_channel_tag[input_index] = tag
