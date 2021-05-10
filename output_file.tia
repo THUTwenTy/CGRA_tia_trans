@@ -16,8 +16,8 @@
 
 <processing_element_5>
     # task 0 route op_6
-    when %p == XXXXXXXX with %i0.0:
-        mov %o2.0, %i0; deq %i0;
+    when %p == 00000000 with %i0.0:
+        mov %o2.0, %i0.0;
 
 <processing_element_6>
     # PE unused
@@ -30,6 +30,9 @@
         halt;
 
 <processing_element_8>
+    # task 2 route op_7
+    when %p == 00000000 with %i1.0:
+        mov %o2.1, %i1.0;
 
 <processing_element_9>
 

@@ -17,12 +17,13 @@ File_graph.close()
 
 def find_ralated_neighbor_task(PE_no, single_task, output_channel):
     next_PE_no = base.derive_PE_neighbor(PE_no, output_channel)
-    for single_task_next_PE in all_PE[next_PE_no].task_list:
-        if base.channel_match[output_channel] in single_task_next_PE.input_channel:
-            input_index = single_task_next_PE.input_channel.index(base.channel_match[output_channel])
-            if single_task_next_PE.op_no == single_task.op_no or \
-                single_task_next_PE.input_from[input_index] == single_task.op_no:
-                return [next_PE_no, single_task_next_PE, input_index]
+    if next_PE_no in range(16):
+        for single_task_next_PE in all_PE[next_PE_no].task_list:
+            for input_index in range(len(single_task_next_PE.input_channel)):
+                if single_task_next_PE.input_channel[input_index] == base.channel_match[output_channel]:
+                    if single_task_next_PE.op_no == single_task.op_no or \
+                        single_task_next_PE.input_from[input_index] == single_task.op_no:
+                        return [next_PE_no, single_task_next_PE, input_index]
     return [next_PE_no, -1, -1] # no related task
 
 # deal with raw log file
@@ -74,7 +75,7 @@ for line in raw_graph_lines:
                 line_split_3 = line_split_2[1].split("]")
                 all_Op[graph_size-1].add_attribute(line_split_3[0])
             all_Op[-1].derive_operation()
-            print("op_", all_Op[-1].Op_No, ": ", all_Op[-1].corresponding_operation)
+            print("op_", all_Op[-1].Op_No, "corresponding_operation: ", all_Op[-1].corresponding_operation)
 OpNo_to_OpNane_dir = {v:k for k,v in OpName_to_OpNo_dir.items()}
 
 # initial graph_matrix
@@ -249,77 +250,57 @@ for single_route in all_Route:
 #print(OpName_to_OpNo_dir)
 
 for single_PE in all_PE:
-    print("PE_", single_PE.index, ":")
     single_PE.rewirte_task_order()
     for single_task in single_PE.task_list:
-        print("    No.", single_task.task_no, "task: ")
-        print("      op: ", single_task.op_no)
-        print("      task_type: ", single_task.task_type)
-        print("      input_channel: ", single_task.input_channel)
-        print("      input_op:", single_task.input_from)
-        print("      output_channel: ", single_task.output_channel)
-        print("      output_op:", single_task.output_to)
-        #if all_Op[single_task.op_no].corresponding_operation in base.base_number: # const task
-
-        for task_output_channel in single_task.output_channel:
+        # deal with tag assignment
+        for output_index in range(len(single_task.output_channel)):
+            task_output_channel = single_task.output_channel[output_index]
             if task_output_channel >= 0: # means inside
                 single_channel_out = single_PE.channel_out[task_output_channel]
                 # assign new tag
                 channel_tag = single_channel_out.assign_channel_tag(single_task, single_task.output_channel.index(task_output_channel))
                 # find related output task
                 [next_PE_no, single_task_next_PE, input_index] = find_ralated_neighbor_task(single_PE.index, single_task, task_output_channel)
-                single_channel_in = single_task_next_PE.input_channel[input_index]
                 # add tag to this task
-                single_task.add_output_tag(base.channel_match[task_output_channel], channel_tag)
-                # assign tag for related output channel
-                all_PE[next_PE_no].channel_in[single_channel_in].assign_channel_tag(single_task_next_PE.task_no, input_index)
-                # add tag to related output task
-                single_task_next_PE.add_input_tag(task_output_channel, channel_tag)
-                print("test channel", task_output_channel)
-            #else: # means output to inside_PE
-                #if all_Op[single_task.op_no].corresponding_operation in base.base_number:
-                    
-        if len(single_PE.task_list) == 1: 
-            if single_task.task_type == "route":
-                # only one task, means predeicate = XXXXXXXX
-                now_state = single_PE.add_state(0, "XXXXXXXX")
-                # add route state
-                now_state.add_state_operation("mov")
-                trigger_input = [single_task.input_channel[0], single_task.input_channel_tag[0]]
-                now_state.add_trigger_input(trigger_input)
-                now_state.add_operand(["i", single_task.input_channel[0], -1], 1)
-                now_state.add_operand(["o", single_task.output_channel[0], single_task.output_channel_tag[0]], 0)
-                now_state.add_deq_channel(single_task.input_channel[0])
-                # bind task and state
-                now_state.add_corresponding_task_no(single_task.task_no)
-                single_task.update_state_no(now_state.state_no)
-                # update next PE's corresponding task tag
-                next_PE_no = base.derive_PE_neighbor(single_PE.index, single_task.output_channel[0])
-                for single_task_next_PE in all_PE[next_PE_no].task_list:
-                    if (base.channel_match[single_task.output_channel[0]] in single_task_next_PE.input_channel) and \
-                        ((single_task.op_no == single_task_next_PE.op_no) or (single_task.output_to[0] == single_task_next_PE.op_no)):
-                        corresponding_channel_index = single_task_next_PE.input_channel.index(base.channel_match[single_task.output_channel[0]])
-                        '''
-                        if single_task_next_PE.add_input_tag(single_task.output_channel[0], single_task.output_channel_tag[0]) > 0
-                            # needs to update corresponding state
-                            all_PE[next_PE_no].state_list[single_task_next_PE.corresponding_state_no]\
-                                .modify_channel_tag(single_task_next_PE.)
-                        
-                # add halt state
-                halt_state = single_PE.add_state(1, "XXXXXXXX")
-                now_state.add_state_operation("halt")
-                trigger_input = [single_task.input_channel[0], single_task]
-            else: # single_task.task_type == "place"
-                state_operation = all_Op[single_task.op_no].corresponding_operation
-                if state_operation[0] in base.base_number: # const
-                    continue
-                elif: state_operation == "phi": # needs two state
-                    now_state = single_PE.add_state(0, "0")
-                    next_state = single_PE.add_state(0, )
-                    '''
+                single_task.add_output_tag(output_index, channel_tag)
+                if next_PE_no in range(16): # output not to CGRA outside
+                    single_channel_in = single_task_next_PE.input_channel[input_index]
+                    # assign tag for related output channel
+                    all_PE[next_PE_no].channel_in[single_channel_in].assign_channel_tag(single_task_next_PE.task_no, input_index)
+                    # add tag to related output task
+                    single_task_next_PE.add_input_tag(input_index, channel_tag)
+                #print("test channel", task_output_channel, ", tag:", channel_tag)
+
+for single_PE in all_PE:
+    print("PE_", single_PE.index, ":")
+    # produce PE_state according to PE_tasks
+    for task_index in range(len(single_PE.task_list)):
+        single_task = single_PE.task_list[task_index]
+        print("    No.", single_task.task_no, "task: ")
+        print("      op: ", single_task.op_no)
+        print("      task_type: ", single_task.task_type)
+        print("      input_channel: ", single_task.input_channel)
+        print("      input_op:", single_task.input_from)
+        print("      input_tag:", single_task.input_channel_tag)
+        print("      output_channel: ", single_task.output_channel)
+        print("      output_op:", single_task.output_to)
+        print("      output_tag:", single_task.output_channel_tag)
+        if single_task.task_type == "place" and all_Op[single_task.op_no].corresponding_operation[0] in base.base_number:
+            print("      const", single_task.op_no, "don't need new state")
+        elif single_task.task_type == "route":
+            # add route state
+            now_state = single_PE.add_state(0, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
+            now_state.add_state_operation("mov")
+            trigger_input = [single_task.input_channel[0], single_task.input_channel_tag[0]]
+            now_state.add_trigger_input(trigger_input)
+            now_state.add_operand(["i", single_task.input_channel[0], single_task.input_channel_tag[0]], 1)
+            now_state.add_operand(["o", single_task.output_channel[0], single_task.output_channel_tag[0]], 0)
+            # bind task and state
+            now_state.add_corresponding_task_no(single_task.task_no)
+            single_task.update_state_no(now_state.state_no)
+        elif single_task.task_type == "place" and 
 
                 
-
 # fprint
 for single_PE in all_PE:
     File_output = File_output + single_PE.File_PE_name()
