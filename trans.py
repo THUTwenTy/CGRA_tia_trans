@@ -6,6 +6,7 @@ all_PE = []                 # store all PEs info
 all_Op = []                 # store all Ops info
 all_Route = []              # store all routes info
 File_output = ""            # store output total str
+rise_base_predicate_time = 0
 
 File_log = open("log", mode = "r")
 raw_log_lines = File_log.readlines()
@@ -29,6 +30,8 @@ def find_ralated_neighbor_task(PE_no, single_task, output_channel):
 def derive_trigger_input(single_PE, single_task, input_index):
     if single_task.input_channel[input_index] < 0: # data from inside
         return [-1, -1]
+    elif single_task.input_channel_shift[input_index] >= 0: # data has been stored in data_reg
+        return [-1, -1]
     else:
         return [single_task.input_channel[input_index], single_task.input_channel_tag[input_index]]
 
@@ -49,8 +52,11 @@ def derive_input_operand(single_PE, single_task, input_index):
             return ["i", single_task.input_channel[input_index], -1]
 
 def derive_output_operand(single_PE, single_task, output_index):
-    if all_Op[single_task.output_to[output_index]].corresponding_operation == "load":
+    if all_Op[single_task.output_to[output_index]].corresponding_operation == "load" or \
+        all_Op[single_task.output_to[output_index]].corresponding_operation == "comb":
         single_PE.update_base_predicate("0")
+        global rise_base_predicate_time
+        rise_base_predicate_time = rise_base_predicate_time + 1
     if single_task.output_channel[output_index] < 0: # data to inside
         for single_other_task in single_PE.task_list:
             if single_task.output_to[output_index] == single_other_task.op_no:
@@ -364,7 +370,7 @@ for single_PE in all_PE:
                 single_task.update_state_no(now_state.state_no)
                 # last one have deq attribute
                 if output_index == output_amount - 1:
-                    if single_task.input_channel[1] >= 0: # input from outside
+                    if trigger_input[0] >= 0: # input from outside
                         now_state.add_deq_channel(single_task.input_channel[1])
             single_PE.base_state = len(single_PE.state_list)
             for output_index in range(output_amount):
@@ -390,26 +396,91 @@ for single_PE in all_PE:
                 else:
                     now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
         elif single_task.task_type == "place" and all_Op[single_task.op_no].corresponding_operation == "comb":
-            print("later")
+            now_state = single_PE.add_state(0, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
+            now_state.add_state_operation("eq")
+            now_state.add_state_note("place comb"+str(single_task.op_no)+" "+single_task.if_br)
+            if single_task.if_br == "T":
+                TF = 1
+            else:
+                TF = 0
+            trigger_input_0 = derive_trigger_input(single_PE, single_task, 0)
+            trigger_input_1 = derive_trigger_input(single_PE, single_task, 1)
+            input_operand_0 = derive_input_operand(single_PE, single_task, 0)
+            input_operand_1 = derive_input_operand(single_PE, single_task, 1)
+            output_operand = derive_output_operand(single_PE, single_task, 0)
+            if trigger_input_0[0] >= 0:
+                trigger_input = derive_trigger_input(single_PE, single_task, 0)
+                now_state.add_trigger_input(trigger_input)
+                now_state.add_deq_channel(single_task.input_channel[0])
+            else:
+                for i in range(rise_base_predicate_time):
+                    single_PE.base_return()
+                rise_base_predicate_time = 0
+            now_state.add_operand(["p", 6, -1], 0)
+            now_state.add_operand(input_operand_0, 1)
+            now_state.add_operand(["const", TF, -1], 2)
+            now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_change(6, single_PE.predicate_reg_unused, "Z"))
+            now_state.add_corresponding_task_no(single_task.task_no)
+            single_task.update_state_no(now_state.state_no)
+            # next sate: go on loop or stop loop
+            now_state = single_PE.add_state(0, single_PE.predicate_change(6, single_PE.predicate_reg_unused, "1"))
+            single_PE.get_new_predicate_unused()
+            if TF == 1:
+                now_state.add_state_note("go on loop")
+            else:
+                now_state.add_state_note("stop loop")
+            now_state.add_state_operation("mov")
+            now_state.add_operand(input_operand_1, 1)
+            now_state.add_operand(output_operand, 0)
+            now_state.add_corresponding_task_no(single_task.task_no)
+            single_task.update_state_no(now_state.state_no)
+            if trigger_input_1[0] >= 0:
+                now_state.add_trigger_input(trigger_input_1)
+                now_state.add_deq_channel(single_task.input_channel[0])
+            now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
+            # next state: stop loop or go on loop
+            now_state = single_PE.add_state(0, "0")
+            single_PE.get_new_predicate_unused()
+            now_state.add_corresponding_task_no(single_task.task_no)
+            single_task.update_state_no(now_state.state_no)
+            if TF == 1:
+                now_state.add_state_note("stop loop")
+            else:
+                now_state.add_state_note("go on loop")
+            if len(single_task.output_to) == 1: # comb op has only 1 output
+                now_state.add_state_operation("nop")
+                now_state.add_next_state_no(single_PE.base_state, single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
+            else: # output[1] is opposite to output[0]
+                output_operand = derive_output_operand(single_PE, single_task, 1)
+                now_state.add_state_operation("mov")
+                now_state.add_operand(input_operand_1, 1)
+                now_state.add_operand(output_operand, 0)
+                if trigger_input_1[0] >= 0:
+                    now_state.add_trigger_input(trigger_input_1)
+                    now_state.add_deq_channel(single_task.input_channel[0])
+                now_state.add_next_state_no(single_PE.base_state, single_PE.predicate_list_to_str_trans(single_PE.predicate_reg_unused))
         elif single_task.task_type == "place" and all_Op[single_task.op_no].corresponding_operation == "load":
             now_state = single_PE.add_state(0, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
             now_state.add_state_operation("mov")
             now_state.add_state_note("load"+str(single_task.op_no))
+            trigger_input = derive_trigger_input(single_PE, single_task, 0)
             input_operand = derive_input_operand(single_PE, single_task, 0)
             output_operand = derive_output_operand(single_PE, single_task, 0)
-            if single_task.input_channel[0] >= 0:
-                trigger_input = derive_trigger_input(single_PE, single_task, 0)
+            if trigger_input[0] >= 0:
                 now_state.add_trigger_input(trigger_input)
                 now_state.add_deq_channel(single_task.input_channel[0])
+            else:
+                for i in range(rise_base_predicate_time):
+                    single_PE.base_return()
+                rise_base_predicate_time = 0
             now_state.add_operand(input_operand, 1)
             now_state.add_operand(["o", 0, 0], 0)
             now_state.add_corresponding_task_no(single_task.task_no)
             single_task.update_state_no(now_state.state_no)
-            single_PE.base_return()
             now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
             # receive load data
             now_state = single_PE.add_state(0, "XXXXXXXX")
-            single_PE.get_new_predicate_unused()
+            #single_PE.get_new_predicate_unused()
             now_state.add_state_operation("mov")
             now_state.add_state_note("receive load data")
             now_state.add_trigger_input([0, 0])
@@ -432,7 +503,8 @@ for single_PE in all_PE:
                 now_state.add_corresponding_task_no(single_task.task_no)
                 single_task.update_state_no(now_state.state_no)
                 if len(single_task.output_channel) == 1: # only 1 output, 1 state can handle
-                    now_state.add_deq_channel(single_task.input_channel[0])
+                    if trigger_input[0] >= 0:
+                        now_state.add_deq_channel(single_task.input_channel[0])
                     now_state.add_next_state_no(single_PE.base_state, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
                 else: # more than 1 ouput ,needs more state
                     now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
@@ -447,7 +519,8 @@ for single_PE in all_PE:
                         now_state.add_corresponding_task_no(single_task.task_no)
                         single_task.update_state_no(now_state.state_no)
                         if output_index == len(single_task.output_channel) - 1:
-                            now_state.add_deq_channel(single_task.input_channel[0])
+                            if trigger_input[0] >= 0:
+                                now_state.add_deq_channel(single_task.input_channel[0])
                             now_state.add_next_state_no(single_PE.base_state, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
                         else:
                             now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
@@ -457,7 +530,7 @@ for single_PE in all_PE:
                 input_operand_0 = derive_input_operand(single_PE, single_task, 0)
                 input_operand_1 = derive_input_operand(single_PE, single_task, 1)
                 output_operand = derive_output_operand(single_PE, single_task, 0)
-                if single_task.input_channel[0] >= 0 and single_task.input_channel[1] >= 0: # needs 2 state to handle
+                if trigger_input_0[0] >= 0 and trigger_input_1[0] >= 0: # needs 2 state to handle
                     now_state.add_trigger_input(trigger_input_0)
                     now_state.add_state_operation("mov")
                     now_state.add_operand(input_operand_0, 1)
@@ -474,9 +547,9 @@ for single_PE in all_PE:
                     now_state.add_state_operation(corresonding_operation)
                     now_state.add_trigger_input(trigger_input_1)
                     input_operand_0 = derive_input_operand(single_PE, single_task, 0)
-                elif single_task.input_channel[0] >= 0:
+                elif trigger_input_0[0] >= 0:
                     now_state.add_trigger_input(trigger_input_0)
-                elif single_task.input_channel[1] >= 0:
+                elif trigger_input_1[0] >= 0:
                     now_state.add_trigger_input(trigger_input_1)
                 now_state.add_operand(input_operand_0, 1)
                 now_state.add_operand(input_operand_1, 2)
@@ -485,9 +558,11 @@ for single_PE in all_PE:
                 single_task.update_state_no(now_state.state_no)
                 if len(single_task.output_channel) == 1: # only 1 output, 1 state can handle
                     now_state.add_next_state_no(single_PE.base_state, single_PE.predicate_list_to_str_trans(single_PE.base_predicate))
-                    if single_task.input_channel[0] >= 0:
+                    if trigger_input_0[0] >= 0 and trigger_input_1[0] >= 0:
+                        now_state.add_deq_channel(single_task.input_channel[1])
+                    elif trigger_input_0[0] >= 0:
                         now_state.add_deq_channel(single_task.input_channel[0])
-                    elif single_task.input_channel[1] >= 0:
+                    elif trigger_input_1[0] >= 0:
                         now_state.add_deq_channel(single_task.input_channel[1])
                 else: # more than 1 ouput ,needs more state
                     now_state.add_next_state_no(len(single_PE.state_list), single_PE.predicate_list_to_str_trans(single_PE.base_predicate))

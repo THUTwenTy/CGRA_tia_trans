@@ -59,7 +59,8 @@ operation_no_dir = {"mov": 2,
                     "ssw": 3,
                     "lmul": 3,
                     "shmul": 3,
-                    "uhmul": 3
+                    "uhmul": 3,
+                    "nop": 0
                     }
 
 base_number = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
@@ -130,9 +131,6 @@ class PE():
     def add_inside_map(self, inside_map):
         self.inside_map = inside_map
 
-    def add_inside_route(self, in_channel, out_no):
-        self.inside_route.append(str(in_no)+str(out_no))
-
     def add_task(self, op_no, task_type):
         self.task_list.append(PE_task(op_no, len(self.task_list), task_type))
 
@@ -176,6 +174,10 @@ class PE():
         while len(next_str) < 8:
             next_str = "0" + next_str
         return self.predicate_str_to_list_trans(next_str)
+
+    def predicate_change(self, predicate_no, predicate_list, character):
+        str = self.predicate_list_to_str_trans(predicate_list)
+        return str[0:(7-predicate_no)] + character + str[(8-predicate_no):]
 
     def rewirte_op_order(self):
         # BFS to design op_order
@@ -224,13 +226,6 @@ class PE():
                 new_task_list[target_op_position] = single_task
                 single_task.task_no = target_op_position
         self.task_list = new_task_list
-
-    def File_predicate_check_tag(self, pre_state, channel_index, tag):
-        File_temp_channel = channel[channel_index].File_io_name_tag("i", tag)
-        return "when %p == " + self.predicate_list_to_str_tans(pre_state) + "with " + File_temp_channel + ":\n"
-    
-    def File_predicate_check(self, pre_state):
-        return "when %p == " + self.predicate_list_to_str_tans(pre_state) + ":\n"
 
 class PE_state():
 
@@ -288,24 +283,27 @@ class PE_state():
                 File_str = File_str + "." + str(self.trigger_input[1]) + ":\n"
         else:
             File_str = File_str + ":\n"
-        File_str = File_str + "        " + self.state_operation + " "
-        for i in range(self.operand_num):
-            single_operand = self.operand[i]
-            if single_operand[0] in ["i", "o", "p", "r"]:
-                File_str = File_str + \
-                    "%" + single_operand[0] + str(single_operand[1])
-                if single_operand[2] >= 0: # with tag
+        if self.state_operation == "nop":
+            File_str = File_str + "        "
+        else:
+            File_str = File_str + "        " + self.state_operation + " "
+            for i in range(self.operand_num):
+                single_operand = self.operand[i]
+                if single_operand[0] in ["i", "o", "p", "r"]:
                     File_str = File_str + \
-                        "." + str(single_operand[2])
-            elif single_operand[0] in ["const"]:
-                File_str = File_str + "$" + str(single_operand[1])
-            elif single_operand[0] in ["unused"]:
-                print("error: port needs definition")
-            if i == self.operand_num-1:
-                File_str = File_str + ";"
-                break
-            else:
-                File_str = File_str + ", "
+                        "%" + single_operand[0] + str(single_operand[1])
+                    if single_operand[2] >= 0: # with tag
+                        File_str = File_str + \
+                            "." + str(single_operand[2])
+                elif single_operand[0] in ["const"]:
+                    File_str = File_str + "$" + str(single_operand[1])
+                elif single_operand[0] in ["unused"]:
+                    print("error: port needs definition")
+                if i == self.operand_num-1:
+                    File_str = File_str + ";"
+                    break
+                else:
+                    File_str = File_str + ", "
         if self.deq_channel >= 0: # with deq statement
             File_str = File_str + " deq %i" + str(self.deq_channel) + ";"
         if self.next_state_no >= 0: # with next state 
@@ -409,12 +407,6 @@ class Op():
 
     def Op_place_to_PE(self, PE_index):
         self.PE_place = PE_index
-
-    def add_input_port(self, channel_index, io_attribute):
-        self.input_port.append(Op_io_place(self.Op_No, "i", self.PE_place, channel_index, io_attribute))
-
-    def add_output_port(self, channel_index, io_attribute):
-        self.output_port.append(Op_io_place(self.Op_No, "o", self.PE_place, channel_index, io_attribute))
 
     def add_inside_PE_dirc(self, NESW):
         self.inside_PE_dirc = NESW
