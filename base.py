@@ -4,7 +4,7 @@ import numpy as np
 
 # Op : Instruction
 Op_trans_dir = {"add": "add",
-                "add": "sub",
+                "sub": "sub",
                 "mul": "lmul",
                 "and": "band",
                 "or": "bor",
@@ -17,7 +17,7 @@ Op_trans_dir = {"add": "add",
                 "output": "output",
                 "phi": "phi",
                 "comb": "comb",
-                "load": "mov"
+                "load": "load"
                 }
 # load, store, comb, phi operation needs extra transform function
 
@@ -101,7 +101,7 @@ class PE():
         for i in range(4):
             self.channel_in.append(PE_channel(PE_index, i, "in"))
             self.channel_out.append(PE_channel(PE_index, i, "out"))
-        self.predicate_reg_unused = [0,0,0,0,0,0,0,0]
+        self.predicate_reg_unused = [1,0,0,0,0,0,0,0]
         self.base_predicate = [0,0,0,0,0,0,0,0]
         self.halt_state = 0
         self.inside_ops = []
@@ -109,15 +109,19 @@ class PE():
         self.op_num = 0
         self.task_list = []
         self.state_list = []
+        self.base_state = 0
 
     def add_data_reg(self, task_no, operand_no):
-        self.data_reg_used_for.append(task, operand_no)
+        self.data_reg_used_for.append([task_no, operand_no])
 
     def update_base_predicate(self, special_predicate):
         if special_predicate == "0": # base_predicate++
             self.base_predicate = self.list_8bit_next(self.base_predicate)
         else: 
             self.base_predicate = special_predicate
+
+    def base_return(self):
+        self.base_predicate = self.list_8bit_before(self.base_predicate)
 
     def add_ops_to_PE(self, op_no):
         self.inside_ops.append(op_no)
@@ -162,6 +166,13 @@ class PE():
     def list_8bit_next(self, list_8bit):
         now_str = "0b" + self.predicate_list_to_str_trans(list_8bit)
         next_str = bin(int(now_str, 2)+1)[2:]
+        while len(next_str) < 8:
+            next_str = "0" + next_str
+        return self.predicate_str_to_list_trans(next_str)
+
+    def list_8bit_before(self, list_8bit):
+        now_str = "0b" + self.predicate_list_to_str_trans(list_8bit)
+        next_str = bin(int(now_str, 2)-1)[2:]
         while len(next_str) < 8:
             next_str = "0" + next_str
         return self.predicate_str_to_list_trans(next_str)
@@ -308,6 +319,8 @@ class PE_task():
         # -2 stands for PE inside
         # -3 stands for undefined
         self.input_channel = [-3, -3]
+        # when two input are all from outside_PE, needs to shift one to inside_reg first
+        self.input_channel_shift = [-1, -1]
         self.output_channel = []
         self.input_from = [-3, -3]  # op
         self.output_to = []         # op
@@ -321,6 +334,9 @@ class PE_task():
         # corresponding_state_no == -3 means haven't been transfered to PE_state
         # corresponding_state_no == -2 means no need to arrange single state
         # index of input_channel, input_from, input_channel_tag are related, output is the same
+
+    def shift_channel(self, operand_no, reg_num):
+        self.input_channel_shift[operand_no] = reg_num
 
     def add_input(self, NESW, operand_no, op_from):
         self.input_channel[operand_no] = NESW

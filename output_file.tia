@@ -13,6 +13,15 @@
         mov %o2.0, %i2; deq %i2; set %p = 00000010;
 
 <processing_element_1>
+    # place lmul4
+    when %p == 00000000 with %i3.0:
+        lmul %r0, $1, %i3; deq %i3; set %p = 00000001;
+    # load6
+    when %p == 00000001:
+        mov %o0.0, %r0; set %p = 00000000;
+    # receive load data
+    when %p == XXXXXXXX with %i0.0:
+        mov %o2.0, %i0.0; deq %i0;
 
 <processing_element_2>
     # PE unused
@@ -25,10 +34,16 @@
         halt;
 
 <processing_element_4>
+    # place add8
+    when %p == 00000000 with %i0.0:
+        add %r0, %i0, $1; set %p = 00000000;
+    # add other outputs
+    when %p == 00000001:
+        add %o2.0, %i0, $1; deq %i0; set %p = 00000000;
 
 <processing_element_5>
-    # 
-    when %p == 00000000 with %i0.0:
+    # route 6 to [7]
+    when %p == XXXXXXXX with %i0.0:
         mov %o2.0, %i0.0; deq %i0;
 
 <processing_element_6>
@@ -42,11 +57,23 @@
         halt;
 
 <processing_element_8>
-    # 
-    when %p == 00000000 with %i1.0:
+    # place eq10
+    when %p == 00000000 with %i0.0:
+        eq %o0.0, %i0, $10; set %p = 00000000;
+    # eq other outputs
+    when %p == 00000001:
+        eq %o2.0, %i0, $10; deq %i0; set %p = 00000000;
+    # route 7 to [15]
+    when %p == XXXXXXXX with %i1.0:
         mov %o2.1, %i1.0; deq %i1;
 
 <processing_element_9>
+    # place add7
+    when %p == 00000000 with %i0.0:
+        mov %r0, %i0; deq %i0; set %p = 00000001;
+    # another input
+    when %p == 00000001 with %i2.0:
+        add %o3.0, %i0, %i2; deq %i0; set %p = 00000000;
 
 <processing_element_10>
     # PE unused
@@ -67,6 +94,9 @@
     # phi2 other rounds
     when %p == 00000001:
         mov %o0.0, %r0; set %p = 00000001;
+    # place add12
+    when %p == 00000001 with %i3.0:
+        add %o2.0, %i3, $1; deq %i3; set %p = 00000001;
 
 <processing_element_14>
     # PE unused
