@@ -2,6 +2,8 @@
 
 import numpy as np
 
+temp_base_state_flag = 0
+
 # Op : Instruction
 Op_trans_dir = {"add": "add",
                 "sub": "sub",
