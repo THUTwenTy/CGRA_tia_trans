@@ -1,0 +1,107 @@
+<processing_element_0>
+    # phi0 initial
+    when %p == 00000000:
+        mov %o1.0, $0; set %p = 00000001;
+    # phi0 initial
+    when %p == 00000001:
+        mov %o2.0, $0; set %p = 00000010;
+    # phi0 other rounds
+    when %p == 00000010 with %i2.0:
+        mov %o1.0, %i2; set %p = 00000011;
+    # phi0 other rounds
+    when %p == 00000010:
+        mov %o2.0, %i2; deq %i2; set %p = 00000010;
+
+<processing_element_1>
+    # place op_mul4
+    when %p == 00000000 with %i3.0:
+        lmul %r0, $1, %i3; deq %i3; set %p = 00000001;
+    # place op_load6
+    when %p == 00000001:
+        mov %o2.0, %r0; set %p = 00000000;
+    # receive load data
+    when %p == XXXXXXXX with %i0.0:
+        mov %o2.0, %i0; deq %i0;
+
+<processing_element_2>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_3>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_4>
+    # place op_add8
+    when %p == 00000000 with %i0.0:
+        add %o2.0, %i0, $1; set %p = 00000001;
+    # op_add8 other outputs
+    when %p == 00000001:
+        add %r0, %i0, $1; deq %i0; set %p = None;
+
+<processing_element_5>
+    # route op_6 to op_7
+    when %p == XXXXXXXX with %i0.0:
+        mov %o2.0, %i0; deq %i0;
+
+<processing_element_6>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_7>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_8>
+    # place op_icmp10
+    when %p == 00000000 with %i0.0:
+        eq %o2.0, %i0, $10; set %p = 00000001;
+    # op_icmp10 other outputs
+    when %p == 00000001:
+        eq %o0.0, %i0, $10; deq %i0; set %p = 00000000;
+    # route op_7 to op_15
+    when %p == XXXXXXXX with %i1.0:
+        mov %o2.1, %i1; deq %i1;
+
+<processing_element_9>
+    # place op_add7
+    when %p == 00000000 with %i0.0:
+        add %o3.0, %i0, %i2; deq %i0; set %p = 00000000;
+
+<processing_element_10>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_11>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_12>
+
+<processing_element_13>
+    # phi2 initial
+    when %p == 00000000:
+        mov %o0.0, $0; set %p = 00000001;
+    # phi2 other rounds
+    when %p == 00000001 with %i3.0:
+        mov %o0.0, %i3; deq %i3; set %p = 00000000;
+    # place op_add12
+    when %p == 00000000 with %i3.1:
+        add %o2.0, %i3, $1; deq %i3; set %p = 00000000;
+
+<processing_element_14>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+
+<processing_element_15>
+    # PE unused
+    when %p == XXXXXXXX:
+        halt;
+

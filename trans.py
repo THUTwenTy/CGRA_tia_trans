@@ -16,7 +16,7 @@ File_log.close()
 File_graph = open("graph_reg.dot", mode = "r")
 raw_graph_lines = File_graph.readlines()
 File_graph.close()
-
+ 
 def find_ralated_neighbor_task(PE_no, single_task, output_channel):
     next_PE_no = base.derive_PE_neighbor(PE_no, output_channel)
     if next_PE_no in range(16):

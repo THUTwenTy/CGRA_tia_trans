@@ -1,0 +1,1361 @@
+
+CGRA - Modelling and Exploration Version 1.0 (http://cgra-me.ece.utoronto.ca/)
+Copyright (c) 2015-2018 University of Toronto. All Rights Reserved.
+For research and academic purposes only. Commercial use is prohibited.
+Please email questions to: Xander Chin(xan@ece.utoronto.ca)
+Compiled: May  8 2021 16:43:44
+
+[INFO] Creating Architecture from XML...
+TI-PE-Mem
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shr comb icmp phi
+    name  reg
+    module  Register
+    name  const
+    module  ConstUnit
+    to: func.in_a
+from: in_a
+    to: func.in_b
+from: in_b
+    to: this.out
+from: func_out
+    to: reg.in
+from: func_out
+TI-PE-Load
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shr comb icmp phi load
+    name  reg
+    module  Register
+    name  const
+    module  ConstUnit
+    to: func.in_a
+from: in_a
+    to: func.in_b
+from: in_b
+    to: this.out
+from: func_out
+    to: reg.in
+from: func_out
+TI-PE
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shr comb icmp phi
+    name  reg
+    module  Register
+    name  const
+    module  ConstUnit
+    to: func.in_a
+from: in_a
+    to: func.in_b
+from: in_b
+    to: this.out
+from: func_out
+    to: reg.in
+from: func_out
+TI-Output
+    name  func
+    module  FuncUnit
+    op  store
+    to: func.in_a
+from: this.in0
+    to: func.in_b
+from: this.in1
+    to: this.out
+from: func.out
+meshblock1
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shr
+    name  register
+    module  Register
+    to: func.in_a
+from: in_a
+    to: func.in_b
+from: in_b
+    to: register.in
+from: func_out
+meshblock2
+    to: test.in0
+from: this.in0
+    to: test.in1
+from: this.in1
+    to: test.in2
+from: this.in2
+    to: test.in3
+from: this.in3
+    to: this.out
+from: test.out
+diagblock1
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shr
+    name  register
+    module  Register
+    to: func.in_a
+from: in_a
+    to: func.in_b
+from: in_b
+    to: register.in
+from: func_out
+IO
+    name  io
+    module  IO
+    to: io.in
+from: this.in
+    to: this.out
+from: io.out
+    to: this.bidir
+from: io.bidir
+MemPort
+    name  mem_port
+    module  MemPort
+    ninput  4
+    to: mem_port.in0
+from: this.in0
+    to: mem_port.in1
+from: this.in1
+    to: mem_port.in2
+from: this.in2
+    to: mem_port.in3
+from: this.in3
+    to: this.out
+from: mem_port.out
+VLIWAdresPE
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shra shrl
+    name  mux_out
+    module  Multiplexer
+    ninput  2
+    name  const
+    module  ConstUnit
+    to: this.rf_out
+from: func.out
+    to: mux_out.in1
+from: this.rf_in_muxout
+    to: this.out
+from: mux_out.out
+VLIWAdresPETorroid
+    name  func
+    module  FuncUnit
+    op  add sub mul div and or xor shl shra shrl
+    name  mux_out
+    module  Multiplexer
+    ninput  2
+    name  const
+    module  ConstUnit
+    to: this.rf_out
+from: func.out
+    to: mux_out.in1
+from: this.rf_in_muxout
+    to: this.out
+from: mux_out.out
+CGAAdresPE
+    name  func
+    module  FuncUnit
+    op  add sub
+    name  mux_out
+    module  Multiplexer
+    ninput  2
+    name  const
+    module  ConstUnit
+    to: this.rf_out
+from: func.out
+    to: mux_out.in1
+from: this.rf_in_muxout
+    to: this.out
+from: mux_out.out
+globalRF
+    module  RegisterFile
+    name  rf
+    ninput  4
+    noutput  8
+    log2-nregister  3
+    size  32
+    to: rf.in0
+from: this.in0
+    to: rf.in1
+from: this.in1
+    to: rf.in2
+from: this.in2
+    to: rf.in3
+from: this.in3
+    to: this.out0
+from: rf.out0
+    to: this.out1
+from: rf.out1
+    to: this.out2
+from: rf.out2
+    to: this.out3
+from: rf.out3
+    to: this.out4
+from: rf.out4
+    to: this.out5
+from: rf.out5
+    to: this.out6
+from: rf.out6
+    to: this.out7
+from: rf.out7
+externRF1_1
+    module  RegisterFile
+    name  rf
+    ninput  1
+    noutput  2
+    log2-nregister  1
+    size  32
+    to: rf.in0
+from: this.in0
+    to: this.out0
+from: rf.out0
+    to: this.out1
+from: rf.out1
+externRF2_1
+    module  RegisterFile
+    name  rf
+    ninput  2
+    noutput  4
+    log2-nregister  2
+    size  32
+    to: rf.in0
+from: this.in0
+    to: rf.in1
+from: this.in1
+    to: this.out0
+from: rf.out0
+    to: this.out1
+from: rf.out1
+    to: this.out2
+from: rf.out2
+    to: this.out3
+from: rf.out3
+Looking for patternsLooking for patternsLooking for patternsLooking for patternsLooking for patternsLooking for patternsUser is referring to relative block
+block_1_0.in0
+block_0_0.out
+User is referring to relative block
+block_1_1.in0
+block_0_1.out
+User is referring to relative block
+block_1_2.in0
+block_0_2.out
+User is referring to relative block
+block_1_3.in0
+block_0_3.out
+Looking for patternsUser is referring to relative block
+block_2_0.in0
+block_1_0.out
+User is referring to relative block
+block_2_1.in0
+block_1_1.out
+User is referring to relative block
+block_2_2.in0
+block_1_2.out
+User is referring to relative block
+block_2_3.in0
+block_1_3.out
+User is referring to relative block
+block_3_0.in0
+block_2_0.out
+User is referring to relative block
+block_3_1.in0
+block_2_1.out
+User is referring to relative block
+block_3_2.in0
+block_2_2.out
+User is referring to relative block
+block_3_3.in0
+block_2_3.out
+User is referring to relative block
+block_4_0.in0
+block_3_0.out
+User is referring to relative block
+block_4_1.in0
+block_3_1.out
+User is referring to relative block
+block_4_2.in0
+block_3_2.out
+User is referring to relative block
+block_4_3.in0
+block_3_3.out
+Looking for patternsUser is referring to relative block
+block_1_0.in2
+block_2_0.out
+User is referring to relative block
+block_1_1.in2
+block_2_1.out
+User is referring to relative block
+block_1_2.in2
+block_2_2.out
+User is referring to relative block
+block_1_3.in2
+block_2_3.out
+User is referring to relative block
+block_2_0.in2
+block_3_0.out
+User is referring to relative block
+block_2_1.in2
+block_3_1.out
+User is referring to relative block
+block_2_2.in2
+block_3_2.out
+User is referring to relative block
+block_2_3.in2
+block_3_3.out
+User is referring to relative block
+block_3_0.in2
+block_4_0.out
+User is referring to relative block
+block_3_1.in2
+block_4_1.out
+User is referring to relative block
+block_3_2.in2
+block_4_2.out
+User is referring to relative block
+block_3_3.in2
+block_4_3.out
+Looking for patternsUser is referring to relative block
+block_1_1.in3
+block_1_0.out
+User is referring to relative block
+block_1_2.in3
+block_1_1.out
+User is referring to relative block
+block_1_3.in3
+block_1_2.out
+User is referring to relative block
+block_2_1.in3
+block_2_0.out
+User is referring to relative block
+block_2_2.in3
+block_2_1.out
+User is referring to relative block
+block_2_3.in3
+block_2_2.out
+User is referring to relative block
+block_3_1.in3
+block_3_0.out
+User is referring to relative block
+block_3_2.in3
+block_3_1.out
+User is referring to relative block
+block_3_3.in3
+block_3_2.out
+User is referring to relative block
+block_4_1.in3
+block_4_0.out
+User is referring to relative block
+block_4_2.in3
+block_4_1.out
+User is referring to relative block
+block_4_3.in3
+block_4_2.out
+Looking for patternsUser is referring to relative block
+block_1_0.in1
+block_1_1.out
+User is referring to relative block
+block_1_1.in1
+block_1_2.out
+User is referring to relative block
+block_1_2.in1
+block_1_3.out
+User is referring to relative block
+block_2_0.in1
+block_2_1.out
+User is referring to relative block
+block_2_1.in1
+block_2_2.out
+User is referring to relative block
+block_2_2.in1
+block_2_3.out
+User is referring to relative block
+block_3_0.in1
+block_3_1.out
+User is referring to relative block
+block_3_1.in1
+block_3_2.out
+User is referring to relative block
+block_3_2.in1
+block_3_3.out
+User is referring to relative block
+block_4_0.in1
+block_4_1.out
+User is referring to relative block
+block_4_1.in1
+block_4_2.out
+User is referring to relative block
+block_4_2.in1
+block_4_3.out
+Looking for patternsUser is referring to relative block
+block_5_0.in0
+block_4_0.out
+User is referring to relative block
+block_5_0.in1
+block_4_1.out
+Looking for patternsUser is referring to relative block
+block_5_1.in
+block_4_1.out
+Create IOio
+Create IOio
+Create IOio
+Create IOio
+Connection ERROR!(block_5_0): port not found (select)
+Create IOio
+
+[ARCHGRAPH]
+CGRA:
+ports:
+connections:
+CGRA<-block_3_0;
+CGRA<-block_1_0;
+CGRA<-block_2_1;
+CGRA<-block_1_0;
+CGRA<-block_1_1;
+CGRA<-block_1_2;
+CGRA<-block_1_3;
+CGRA<-block_2_0;
+CGRA<-block_1_1;
+CGRA<-block_2_1;
+CGRA<-block_1_2;
+CGRA<-block_1_0;
+CGRA<-block_2_2;
+CGRA<-block_1_3;
+CGRA<-block_1_1;
+CGRA<-block_2_3;
+CGRA<-block_1_2;
+CGRA<-block_3_1;
+CGRA<-block_1_1;
+CGRA<-block_2_2;
+CGRA<-block_2_0;
+CGRA<-block_3_2;
+CGRA<-block_1_2;
+CGRA<-block_2_3;
+CGRA<-block_2_1;
+CGRA<-block_3_3;
+CGRA<-block_1_3;
+CGRA<-block_2_2;
+CGRA<-block_4_0;
+CGRA<-block_2_0;
+CGRA<-block_3_1;
+CGRA<-block_4_1;
+CGRA<-block_2_1;
+CGRA<-block_3_2;
+CGRA<-block_3_0;
+CGRA<-block_4_2;
+CGRA<-block_2_2;
+CGRA<-block_3_3;
+CGRA<-block_3_1;
+CGRA<-block_4_3;
+CGRA<-block_2_3;
+CGRA<-block_3_2;
+CGRA<-block_3_0;
+CGRA<-block_4_1;
+CGRA<-block_5_0;
+CGRA<-block_3_1;
+CGRA<-block_4_2;
+CGRA<-block_4_0;
+CGRA<-block_5_0;
+CGRA<-block_5_1;
+CGRA<-block_3_2;
+CGRA<-block_4_3;
+CGRA<-block_4_1;
+CGRA<-block_3_3;
+CGRA<-block_4_2;
+submodules:
+block_0_0
+block_0_1
+block_0_2
+block_0_3
+block_1_0
+block_1_1
+block_1_2
+block_1_3
+block_2_0
+block_2_1
+block_2_2
+block_2_3
+block_3_0
+block_3_1
+block_3_2
+block_3_3
+block_4_0
+block_4_1
+block_4_2
+block_4_3
+block_5_0
+block_5_1
+CGRA;
+block_2_0.out->block_3_0.in0;
+block_2_0.out->block_1_0.in2;
+block_2_0.out->block_2_1.in3;
+block_0_0.out->block_1_0.in0;
+block_0_1.out->block_1_1.in0;
+block_0_2.out->block_1_2.in0;
+block_0_3.out->block_1_3.in0;
+block_1_0.out->block_2_0.in0;
+block_1_0.out->block_1_1.in3;
+block_1_1.out->block_2_1.in0;
+block_1_1.out->block_1_2.in3;
+block_1_1.out->block_1_0.in1;
+block_1_2.out->block_2_2.in0;
+block_1_2.out->block_1_3.in3;
+block_1_2.out->block_1_1.in1;
+block_1_3.out->block_2_3.in0;
+block_1_3.out->block_1_2.in1;
+block_2_1.out->block_3_1.in0;
+block_2_1.out->block_1_1.in2;
+block_2_1.out->block_2_2.in3;
+block_2_1.out->block_2_0.in1;
+block_2_2.out->block_3_2.in0;
+block_2_2.out->block_1_2.in2;
+block_2_2.out->block_2_3.in3;
+block_2_2.out->block_2_1.in1;
+block_2_3.out->block_3_3.in0;
+block_2_3.out->block_1_3.in2;
+block_2_3.out->block_2_2.in1;
+block_3_0.out->block_4_0.in0;
+block_3_0.out->block_2_0.in2;
+block_3_0.out->block_3_1.in3;
+block_3_1.out->block_4_1.in0;
+block_3_1.out->block_2_1.in2;
+block_3_1.out->block_3_2.in3;
+block_3_1.out->block_3_0.in1;
+block_3_2.out->block_4_2.in0;
+block_3_2.out->block_2_2.in2;
+block_3_2.out->block_3_3.in3;
+block_3_2.out->block_3_1.in1;
+block_3_3.out->block_4_3.in0;
+block_3_3.out->block_2_3.in2;
+block_3_3.out->block_3_2.in1;
+block_4_0.out->block_3_0.in2;
+block_4_0.out->block_4_1.in3;
+block_4_0.out->block_5_0.in0;
+block_4_1.out->block_3_1.in2;
+block_4_1.out->block_4_2.in3;
+block_4_1.out->block_4_0.in1;
+block_4_1.out->block_5_0.in1;
+block_4_1.out->block_5_1.in;
+block_4_2.out->block_3_2.in2;
+block_4_2.out->block_4_3.in3;
+block_4_2.out->block_4_1.in1;
+block_4_3.out->block_3_3.in2;
+block_4_3.out->block_4_2.in1;
+block_0_0;
+block_0_0.in->io.in;
+io.out->block_0_0.out;
+io.bidir->block_0_0.bidir;
+io;
+io.in->reg_in.in;
+reg_in.out->OE.in;
+reg_out.out->io.out;
+OE.out->reg_out.in;
+block_0_1;
+block_0_1.in->io.in;
+io.out->block_0_1.out;
+io.bidir->block_0_1.bidir;
+io;
+io.in->reg_in.in;
+reg_in.out->OE.in;
+reg_out.out->io.out;
+OE.out->reg_out.in;
+block_0_2;
+block_0_2.in->io.in;
+io.out->block_0_2.out;
+io.bidir->block_0_2.bidir;
+io;
+io.in->reg_in.in;
+reg_in.out->OE.in;
+reg_out.out->io.out;
+OE.out->reg_out.in;
+block_0_3;
+block_0_3.in->io.in;
+io.out->block_0_3.out;
+io.bidir->block_0_3.bidir;
+io;
+io.in->reg_in.in;
+reg_in.out->OE.in;
+reg_out.out->io.out;
+OE.out->reg_out.in;
+block_1_0;
+block_1_0.in0->TI-PE-Load_mux0.in0;
+block_1_0.in0->TI-PE-Load_mux1.in0;
+block_1_0.in1->TI-PE-Load_mux0.in1;
+block_1_0.in1->TI-PE-Load_mux1.in1;
+block_1_0.in2->TI-PE-Load_mux0.in2;
+block_1_0.in2->TI-PE-Load_mux1.in2;
+block_1_0.in3->TI-PE-Load_mux0.in3;
+block_1_0.in3->TI-PE-Load_mux1.in3;
+func.out->TI-PE-Load_mux2.in2;
+func.out->block_1_0.out;
+func.out->reg.in;
+reg.out->TI-PE-Load_mux0.in5;
+reg.out->TI-PE-Load_mux1.in5;
+const.out->TI-PE-Load_mux0.in4;
+const.out->TI-PE-Load_mux1.in4;
+TI-PE-Load_mux0.out->func.in_a;
+TI-PE-Load_mux0.out->TI-PE-Load_mux2.in0;
+TI-PE-Load_mux1.out->func.in_b;
+TI-PE-Load_mux1.out->TI-PE-Load_mux2.in1;
+const;
+block_1_1;
+block_1_1.in0->TI-PE-Load_mux0.in0;
+block_1_1.in0->TI-PE-Load_mux1.in0;
+block_1_1.in1->TI-PE-Load_mux0.in1;
+block_1_1.in1->TI-PE-Load_mux1.in1;
+block_1_1.in2->TI-PE-Load_mux0.in2;
+block_1_1.in2->TI-PE-Load_mux1.in2;
+block_1_1.in3->TI-PE-Load_mux0.in3;
+block_1_1.in3->TI-PE-Load_mux1.in3;
+func.out->TI-PE-Load_mux2.in2;
+func.out->block_1_1.out;
+func.out->reg.in;
+reg.out->TI-PE-Load_mux0.in5;
+reg.out->TI-PE-Load_mux1.in5;
+const.out->TI-PE-Load_mux0.in4;
+const.out->TI-PE-Load_mux1.in4;
+TI-PE-Load_mux0.out->func.in_a;
+TI-PE-Load_mux0.out->TI-PE-Load_mux2.in0;
+TI-PE-Load_mux1.out->func.in_b;
+TI-PE-Load_mux1.out->TI-PE-Load_mux2.in1;
+const;
+block_1_2;
+block_1_2.in0->TI-PE-Load_mux0.in0;
+block_1_2.in0->TI-PE-Load_mux1.in0;
+block_1_2.in1->TI-PE-Load_mux0.in1;
+block_1_2.in1->TI-PE-Load_mux1.in1;
+block_1_2.in2->TI-PE-Load_mux0.in2;
+block_1_2.in2->TI-PE-Load_mux1.in2;
+block_1_2.in3->TI-PE-Load_mux0.in3;
+block_1_2.in3->TI-PE-Load_mux1.in3;
+func.out->TI-PE-Load_mux2.in2;
+func.out->block_1_2.out;
+func.out->reg.in;
+reg.out->TI-PE-Load_mux0.in5;
+reg.out->TI-PE-Load_mux1.in5;
+const.out->TI-PE-Load_mux0.in4;
+const.out->TI-PE-Load_mux1.in4;
+TI-PE-Load_mux0.out->func.in_a;
+TI-PE-Load_mux0.out->TI-PE-Load_mux2.in0;
+TI-PE-Load_mux1.out->func.in_b;
+TI-PE-Load_mux1.out->TI-PE-Load_mux2.in1;
+const;
+block_1_3;
+block_1_3.in0->TI-PE-Load_mux0.in0;
+block_1_3.in0->TI-PE-Load_mux1.in0;
+block_1_3.in1->TI-PE-Load_mux0.in1;
+block_1_3.in1->TI-PE-Load_mux1.in1;
+block_1_3.in2->TI-PE-Load_mux0.in2;
+block_1_3.in2->TI-PE-Load_mux1.in2;
+block_1_3.in3->TI-PE-Load_mux0.in3;
+block_1_3.in3->TI-PE-Load_mux1.in3;
+func.out->TI-PE-Load_mux2.in2;
+func.out->block_1_3.out;
+func.out->reg.in;
+reg.out->TI-PE-Load_mux0.in5;
+reg.out->TI-PE-Load_mux1.in5;
+const.out->TI-PE-Load_mux0.in4;
+const.out->TI-PE-Load_mux1.in4;
+TI-PE-Load_mux0.out->func.in_a;
+TI-PE-Load_mux0.out->TI-PE-Load_mux2.in0;
+TI-PE-Load_mux1.out->func.in_b;
+TI-PE-Load_mux1.out->TI-PE-Load_mux2.in1;
+const;
+block_2_0;
+block_2_0.in3->TI-PE_mux0.in3;
+block_2_0.in3->TI-PE_mux1.in3;
+block_2_0.in2->TI-PE_mux0.in2;
+block_2_0.in2->TI-PE_mux1.in2;
+block_2_0.in0->TI-PE_mux0.in0;
+block_2_0.in0->TI-PE_mux1.in0;
+block_2_0.in1->TI-PE_mux0.in1;
+block_2_0.in1->TI-PE_mux1.in1;
+func.out->TI-PE_mux2.in2;
+func.out->block_2_0.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_2_1;
+block_2_1.in0->TI-PE_mux0.in0;
+block_2_1.in0->TI-PE_mux1.in0;
+block_2_1.in1->TI-PE_mux0.in1;
+block_2_1.in1->TI-PE_mux1.in1;
+block_2_1.in2->TI-PE_mux0.in2;
+block_2_1.in2->TI-PE_mux1.in2;
+block_2_1.in3->TI-PE_mux0.in3;
+block_2_1.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_2_1.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_2_2;
+block_2_2.in0->TI-PE_mux0.in0;
+block_2_2.in0->TI-PE_mux1.in0;
+block_2_2.in1->TI-PE_mux0.in1;
+block_2_2.in1->TI-PE_mux1.in1;
+block_2_2.in2->TI-PE_mux0.in2;
+block_2_2.in2->TI-PE_mux1.in2;
+block_2_2.in3->TI-PE_mux0.in3;
+block_2_2.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_2_2.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_2_3;
+block_2_3.in0->TI-PE_mux0.in0;
+block_2_3.in0->TI-PE_mux1.in0;
+block_2_3.in1->TI-PE_mux0.in1;
+block_2_3.in1->TI-PE_mux1.in1;
+block_2_3.in2->TI-PE_mux0.in2;
+block_2_3.in2->TI-PE_mux1.in2;
+block_2_3.in3->TI-PE_mux0.in3;
+block_2_3.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_2_3.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_3_0;
+block_3_0.in0->TI-PE_mux0.in0;
+block_3_0.in0->TI-PE_mux1.in0;
+block_3_0.in1->TI-PE_mux0.in1;
+block_3_0.in1->TI-PE_mux1.in1;
+block_3_0.in2->TI-PE_mux0.in2;
+block_3_0.in2->TI-PE_mux1.in2;
+block_3_0.in3->TI-PE_mux0.in3;
+block_3_0.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_3_0.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_3_1;
+block_3_1.in0->TI-PE_mux0.in0;
+block_3_1.in0->TI-PE_mux1.in0;
+block_3_1.in1->TI-PE_mux0.in1;
+block_3_1.in1->TI-PE_mux1.in1;
+block_3_1.in2->TI-PE_mux0.in2;
+block_3_1.in2->TI-PE_mux1.in2;
+block_3_1.in3->TI-PE_mux0.in3;
+block_3_1.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_3_1.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_3_2;
+block_3_2.in0->TI-PE_mux0.in0;
+block_3_2.in0->TI-PE_mux1.in0;
+block_3_2.in1->TI-PE_mux0.in1;
+block_3_2.in1->TI-PE_mux1.in1;
+block_3_2.in2->TI-PE_mux0.in2;
+block_3_2.in2->TI-PE_mux1.in2;
+block_3_2.in3->TI-PE_mux0.in3;
+block_3_2.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_3_2.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_3_3;
+block_3_3.in0->TI-PE_mux0.in0;
+block_3_3.in0->TI-PE_mux1.in0;
+block_3_3.in1->TI-PE_mux0.in1;
+block_3_3.in1->TI-PE_mux1.in1;
+block_3_3.in2->TI-PE_mux0.in2;
+block_3_3.in2->TI-PE_mux1.in2;
+block_3_3.in3->TI-PE_mux0.in3;
+block_3_3.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_3_3.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_4_0;
+block_4_0.in0->TI-PE_mux0.in0;
+block_4_0.in0->TI-PE_mux1.in0;
+block_4_0.in1->TI-PE_mux0.in1;
+block_4_0.in1->TI-PE_mux1.in1;
+block_4_0.in2->TI-PE_mux0.in2;
+block_4_0.in2->TI-PE_mux1.in2;
+block_4_0.in3->TI-PE_mux0.in3;
+block_4_0.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_4_0.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_4_1;
+block_4_1.in0->TI-PE_mux0.in0;
+block_4_1.in0->TI-PE_mux1.in0;
+block_4_1.in1->TI-PE_mux0.in1;
+block_4_1.in1->TI-PE_mux1.in1;
+block_4_1.in2->TI-PE_mux0.in2;
+block_4_1.in2->TI-PE_mux1.in2;
+block_4_1.in3->TI-PE_mux0.in3;
+block_4_1.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_4_1.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_4_2;
+block_4_2.in0->TI-PE_mux0.in0;
+block_4_2.in0->TI-PE_mux1.in0;
+block_4_2.in1->TI-PE_mux0.in1;
+block_4_2.in1->TI-PE_mux1.in1;
+block_4_2.in2->TI-PE_mux0.in2;
+block_4_2.in2->TI-PE_mux1.in2;
+block_4_2.in3->TI-PE_mux0.in3;
+block_4_2.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_4_2.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_4_3;
+block_4_3.in0->TI-PE_mux0.in0;
+block_4_3.in0->TI-PE_mux1.in0;
+block_4_3.in1->TI-PE_mux0.in1;
+block_4_3.in1->TI-PE_mux1.in1;
+block_4_3.in2->TI-PE_mux0.in2;
+block_4_3.in2->TI-PE_mux1.in2;
+block_4_3.in3->TI-PE_mux0.in3;
+block_4_3.in3->TI-PE_mux1.in3;
+func.out->TI-PE_mux2.in2;
+func.out->block_4_3.out;
+func.out->reg.in;
+reg.out->TI-PE_mux0.in5;
+reg.out->TI-PE_mux1.in5;
+const.out->TI-PE_mux0.in4;
+const.out->TI-PE_mux1.in4;
+TI-PE_mux0.out->func.in_a;
+TI-PE_mux0.out->TI-PE_mux2.in0;
+TI-PE_mux1.out->func.in_b;
+TI-PE_mux1.out->TI-PE_mux2.in1;
+const;
+block_5_0;
+block_5_0.in1->func.in_b;
+func.out->block_5_0.out;
+block_5_0.in0->func.in_a;
+block_5_1;
+io.bidir->block_5_1.bidir;
+block_5_1.in->io.in;
+io.out->block_5_1.out;
+io;
+reg_in.out->OE.in;
+reg_out.out->io.out;
+io.in->reg_in.in;
+OE.out->reg_out.in;
+[INFO] Parsing DFG...
+[INFO] Creating Mapper...
+[INFO] Gurobi ILP Solver Specified
+[INFO] Mapping DFG Onto CGRA Architecture...
+END GUROBI!
+Academic license - for non-commercial use only
+Optimize a model with 21247 rows, 16366 columns and 59700 nonzeros
+Variable types: 0 continuous, 16366 integer (16366 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+00]
+Presolve removed 13151 rows and 8697 columns
+Presolve time: 0.07s
+Presolved: 8096 rows, 7669 columns, 27817 nonzeros
+Variable types: 0 continuous, 7669 integer (7669 binary)
+
+Root relaxation: objective 1.065000e+02, 5207 iterations, 0.23 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0  106.50000    0  480          -  106.50000      -     -    0s
+     0     0  106.70000    0  551          -  106.70000      -     -    0s
+     0     0  106.70000    0  643          -  106.70000      -     -    0s
+     0     0  107.75455    0  780          -  107.75455      -     -    1s
+     0     0  107.81891    0  996          -  107.81891      -     -    1s
+     0     0  107.85057    0 1002          -  107.85057      -     -    1s
+     0     0  107.86667    0  935          -  107.86667      -     -    1s
+     0     0  107.86667    0  944          -  107.86667      -     -    1s
+     0     0  107.86877    0 1021          -  107.86877      -     -    1s
+     0     0  107.90164    0  959          -  107.90164      -     -    1s
+     0     0  107.90711    0  910          -  107.90711      -     -    1s
+     0     0  107.90828    0  891          -  107.90828      -     -    1s
+     0     0  107.94746    0 1299          -  107.94746      -     -    1s
+     0     0  107.96916    0 1205          -  107.96916      -     -    2s
+     0     0  107.97034    0 1306          -  107.97034      -     -    2s
+     0     0  107.97034    0 1308          -  107.97034      -     -    2s
+     0     0  108.00872    0 1211          -  108.00872      -     -    2s
+     0     0  108.01744    0 1265          -  108.01744      -     -    2s
+     0     0  108.02180    0 1280          -  108.02180      -     -    2s
+     0     0  108.02214    0 1377          -  108.02214      -     -    2s
+     0     0  108.04613    0 1348          -  108.04613      -     -    2s
+     0     0  108.06289    0 1318          -  108.06289      -     -    2s
+     0     0  108.06399    0 1269          -  108.06399      -     -    2s
+     0     0  108.06591    0 1351          -  108.06591      -     -    2s
+     0     0  108.06622    0 1337          -  108.06622      -     -    2s
+     0     0  108.10836    0 1259          -  108.10836      -     -    2s
+     0     0  108.19910    0 1262          -  108.19910      -     -    2s
+     0     0  108.20671    0 1325          -  108.20671      -     -    2s
+     0     0  108.20709    0 1309          -  108.20709      -     -    2s
+     0     0  108.27036    0 1525          -  108.27036      -     -    2s
+     0     0  108.27904    0 1586          -  108.27904      -     -    2s
+     0     0  108.28181    0 1566          -  108.28181      -     -    3s
+     0     0  108.31636    0 1602          -  108.31636      -     -    3s
+     0     0  108.33246    0 1417          -  108.33246      -     -    3s
+     0     0  108.33485    0 1326          -  108.33485      -     -    3s
+     0     0  108.33529    0 1315          -  108.33529      -     -    3s
+     0     0  108.34529    0 1495          -  108.34529      -     -    3s
+     0     0  108.35355    0 1485          -  108.35355      -     -    3s
+     0     0  108.35394    0 1589          -  108.35394      -     -    3s
+     0     0  108.39637    0 1548          -  108.39637      -     -    3s
+     0     0  108.41131    0 1563          -  108.41131      -     -    3s
+     0     0  108.41131    0 1581          -  108.41131      -     -    3s
+     0     0  108.47221    0 1649          -  108.47221      -     -    3s
+     0     0  108.48035    0 1686          -  108.48035      -     -    3s
+     0     0  108.48126    0 1796          -  108.48126      -     -    3s
+     0     0  108.48126    0 1789          -  108.48126      -     -    3s
+     0     0  108.50244    0 1562          -  108.50244      -     -    3s
+     0     0  108.50712    0 1659          -  108.50712      -     -    3s
+     0     0  108.50734    0 1673          -  108.50734      -     -    3s
+     0     0  108.61075    0 1530          -  108.61075      -     -    3s
+     0     0  108.61337    0 1604          -  108.61337      -     -    3s
+     0     0  108.61493    0 1620          -  108.61493      -     -    3s
+     0     0  108.61530    0 1677          -  108.61530      -     -    3s
+     0     0  108.66257    0 1576          -  108.66257      -     -    4s
+     0     0  108.67065    0 1831          -  108.67065      -     -    4s
+     0     0  108.67078    0 1841          -  108.67078      -     -    4s
+     0     0  108.69622    0 1732          -  108.69622      -     -    4s
+     0     0  108.70358    0 1639          -  108.70358      -     -    4s
+     0     0  108.70998    0 1623          -  108.70998      -     -    4s
+     0     0  108.71077    0 1634          -  108.71077      -     -    4s
+     0     0  108.71080    0 1601          -  108.71080      -     -    4s
+     0     0  108.73129    0 1635          -  108.73129      -     -    4s
+     0     0  108.73734    0 1827          -  108.73734      -     -    4s
+     0     0  108.73819    0 1846          -  108.73819      -     -    4s
+     0     0  108.73856    0 1879          -  108.73856      -     -    4s
+     0     0  108.78175    0 1672          -  108.78175      -     -    4s
+     0     0  108.78593    0 1745          -  108.78593      -     -    4s
+     0     0  108.78736    0 1857          -  108.78736      -     -    4s
+     0     0  108.78818    0 1867          -  108.78818      -     -    4s
+     0     0  108.78852    0 1787          -  108.78852      -     -    4s
+     0     0  108.80429    0 1772          -  108.80429      -     -    4s
+     0     0  108.80797    0 1728          -  108.80797      -     -    5s
+     0     0  108.81125    0 1836          -  108.81125      -     -    5s
+     0     0  108.81173    0 1817          -  108.81173      -     -    5s
+     0     0  108.83109    0 1791          -  108.83109      -     -    5s
+     0     0  108.83315    0 1930          -  108.83315      -     -    5s
+     0     0  108.83338    0 1989          -  108.83338      -     -    5s
+     0     0  108.85467    0 1876          -  108.85467      -     -    5s
+     0     0  108.86246    0 1942          -  108.86246      -     -    5s
+     0     0  108.86292    0 1871          -  108.86292      -     -    5s
+     0     0  108.89705    0 1706          -  108.89705      -     -    5s
+     0     0  108.90264    0 1797          -  108.90264      -     -    5s
+     0     0  108.90332    0 1883          -  108.90332      -     -    5s
+     0     0  108.93902    0 1904          -  108.93902      -     -    5s
+     0     0  108.94478    0 1908          -  108.94478      -     -    5s
+     0     0  108.94942    0 1842          -  108.94942      -     -    5s
+     0     0  108.95081    0 1830          -  108.95081      -     -    5s
+     0     0  108.95084    0 1870          -  108.95084      -     -    5s
+     0     0  108.97786    0 1874          -  108.97786      -     -    6s
+     0     0  108.98558    0 1879          -  108.98558      -     -    6s
+     0     0  108.98681    0 1909          -  108.98681      -     -    6s
+     0     0  108.98761    0 1970          -  108.98761      -     -    6s
+     0     0  109.02653    0 1870          -  109.02653      -     -    6s
+     0     0  109.03903    0 1777          -  109.03903      -     -    6s
+     0     0  109.03907    0 1792          -  109.03907      -     -    6s
+     0     0  109.07630    0 1870          -  109.07630      -     -    6s
+     0     0  109.08076    0 1878          -  109.08076      -     -    6s
+     0     0  109.08407    0 1981          -  109.08407      -     -    6s
+     0     0  109.08407    0 1982          -  109.08407      -     -    6s
+H    0     0                     152.0000000  109.08407  28.2%     -    6s
+     0     0  109.13772    0 1810  152.00000  109.13772  28.2%     -    6s
+     0     0  109.15070    0 1930  152.00000  109.15070  28.2%     -    6s
+     0     0  109.15207    0 1903  152.00000  109.15207  28.2%     -    7s
+     0     0  109.15233    0 1963  152.00000  109.15233  28.2%     -    7s
+     0     0  109.18961    0 1790  152.00000  109.18961  28.2%     -    7s
+     0     0  109.19190    0 1743  152.00000  109.19190  28.2%     -    7s
+     0     0  109.19623    0 1900  152.00000  109.19623  28.2%     -    7s
+     0     0  109.19632    0 1916  152.00000  109.19632  28.2%     -    7s
+     0     0  109.22315    0 2024  152.00000  109.22315  28.1%     -    7s
+     0     0  109.22992    0 1948  152.00000  109.22992  28.1%     -    7s
+     0     0  109.23409    0 1983  152.00000  109.23409  28.1%     -    7s
+     0     0  109.23454    0 1995  152.00000  109.23454  28.1%     -    7s
+     0     0  109.26656    0 1920  152.00000  109.26656  28.1%     -    7s
+     0     0  109.28032    0 1845  152.00000  109.28032  28.1%     -    7s
+     0     0  109.28453    0 1875  152.00000  109.28453  28.1%     -    7s
+     0     0  109.28573    0 2024  152.00000  109.28573  28.1%     -    7s
+     0     0  109.28616    0 1979  152.00000  109.28616  28.1%     -    7s
+     0     0  109.32037    0 1910  152.00000  109.32037  28.1%     -    8s
+     0     0  109.33474    0 1997  152.00000  109.33474  28.1%     -    8s
+     0     0  109.34012    0 1953  152.00000  109.34012  28.1%     -    8s
+     0     0  109.34153    0 2018  152.00000  109.34153  28.1%     -    8s
+     0     0  109.34161    0 2049  152.00000  109.34161  28.1%     -    8s
+     0     0  109.36350    0 1982  152.00000  109.36350  28.1%     -    8s
+     0     0  109.36998    0 2037  152.00000  109.36998  28.0%     -    8s
+     0     0  109.37078    0 1951  152.00000  109.37078  28.0%     -    8s
+     0     0  109.41002    0 1963  152.00000  109.41002  28.0%     -    8s
+     0     0  109.41895    0 1939  152.00000  109.41895  28.0%     -    8s
+     0     0  109.41960    0 1981  152.00000  109.41960  28.0%     -    8s
+     0     0  109.43722    0 1989  152.00000  109.43722  28.0%     -    9s
+     0     0  109.43905    0 2031  152.00000  109.43905  28.0%     -    9s
+     0     0  109.44174    0 2022  152.00000  109.44174  28.0%     -    9s
+     0     0  109.44307    0 2032  152.00000  109.44307  28.0%     -    9s
+     0     0  109.44320    0 2048  152.00000  109.44320  28.0%     -    9s
+     0     0  109.45466    0 2110  152.00000  109.45466  28.0%     -    9s
+     0     0  109.45638    0 2125  152.00000  109.45638  28.0%     -    9s
+     0     0  109.45638    0 2110  152.00000  109.45638  28.0%     -    9s
+     0     0  109.48942    0 2025  152.00000  109.48942  28.0%     -   10s
+     0     0  109.49507    0 1974  152.00000  109.49507  28.0%     -   10s
+     0     0  109.49629    0 2035  152.00000  109.49629  28.0%     -   10s
+H    0     0                     148.0000000  109.49629  26.0%     -   10s
+     0     0  109.52450    0 1796  148.00000  109.52450  26.0%     -   10s
+     0     0  109.52734    0 1781  148.00000  109.52734  26.0%     -   10s
+     0     0  109.52903    0 1789  148.00000  109.52903  26.0%     -   10s
+     0     0  109.52924    0 1810  148.00000  109.52924  26.0%     -   10s
+     0     0  109.54236    0 1849  148.00000  109.54236  26.0%     -   11s
+     0     0  109.54617    0 2023  148.00000  109.54617  26.0%     -   11s
+     0     0  109.54731    0 2035  148.00000  109.54731  26.0%     -   11s
+     0     0  109.55824    0 1893  148.00000  109.55824  26.0%     -   11s
+     0     0  109.55979    0 2112  148.00000  109.55979  26.0%     -   12s
+     0     0  109.55991    0 2157  148.00000  109.55991  26.0%     -   12s
+     0     0  109.57325    0 1953  148.00000  109.57325  26.0%     -   12s
+     0     0  109.57325    0 1906  148.00000  109.57325  26.0%     -   12s
+     0     2  109.57325    0 1906  148.00000  109.57325  26.0%     -   14s
+     1     4  109.58188    1 1900  148.00000  109.57328  26.0%   567   15s
+    39    40  114.27853   10 1503  148.00000  109.61829  25.9%   536   20s
+   184   148  112.98010    5 1650  148.00000  109.80244  25.8%   279   25s
+   323   244  135.91332   22  981  148.00000  109.80244  25.8%   244   30s
+   504   367  127.12153   18  806  148.00000  109.99490  25.7%   227   35s
+   710   518  114.92185   24 1316  148.00000  110.01335  25.7%   216   40s
+   894   655  114.70017   23 1224  148.00000  110.01362  25.7%   205   45s
+  1034   764  119.38839   34 1906  148.00000  110.24019  25.5%   202   54s
+  1036   765  115.64528   24  489  148.00000  110.24019  25.5%   202   55s
+  1045   771  116.09510   10 1758  148.00000  114.95776  22.3%   200   60s
+  1050   775  119.12155   20 1871  148.00000  115.24677  22.1%   199   65s
+  1056   779  115.64528   24 1953  148.00000  115.25632  22.1%   198   70s
+  1065   786  116.09510   10 1905  148.00000  115.29758  22.1%   211   75s
+  1071   790  115.52317   16 1910  148.00000  115.52317  21.9%   209   81s
+  1074   795  115.57688   26 1961  148.00000  115.54193  21.9%   220   85s
+  1088   806  115.63077   29 1795  148.00000  115.63047  21.9%   229   90s
+H 1104   773                     145.0000000  115.68678  20.2%   237   92s
+  1113   779  115.71706   32 1653  145.00000  115.71706  20.2%   243   95s
+  1138   798  122.77168   35 1507  145.00000  115.81104  20.1%   254  100s
+  1171   813  116.03505   39 1339  145.00000  116.03505  20.0%   262  105s
+
+Cutting planes:
+  Gomory: 29
+  Zero half: 33
+  Mod-K: 1
+
+Explored 1177 nodes (336784 simplex iterations) in 105.11 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 3: 145 148 152 
+
+Optimal solution found (tolerance 2.00e-01)
+Best objective 1.450000000000e+02, best bound 1.170000000000e+02, gap 19.3103%
+Gurobi Runtime: 105.114
+
+Operation Mapping Result:
+phi0(phi): 0:block_1_0.func.fu
+const1(const): 0:block_1_0.const.const
+phi2(phi): 0:block_4_1.func.fu
+const3(const): 0:block_4_1.const.const
+mul4(mul): 0:block_1_1.func.fu
+const5(const): 0:block_1_1.const.const
+load6(load): 0:block_1_1.func.fu
+add7(add): 0:block_3_1.func.fu
+add8(add): 0:block_2_0.func.fu
+const9(const): 0:block_2_0.const.const
+icmp10(icmp): 0:block_3_0.func.fu
+const11(const): 0:block_3_0.const.const
+add12(add): 0:block_4_1.func.fu
+const13(const): 0:block_4_1.const.const
+output14(output): 0:block_5_1.io.OE.io
+comb15(comb): 0:block_4_0.func.fu
+comb16(comb): 0:block_2_0.func.fu
+
+Connection Mapping Result:
+phi0_val_output->mul4(mul)
+	0:block_1_0.func.m_out
+	0:block_1_0.func.out
+	0:block_1_0.out
+	0:block_1_1.in3
+	0:block_1_1.TI-PE-Load_mux1.in3
+	0:block_1_1.TI-PE-Load_mux1.mux
+	0:block_1_1.TI-PE-Load_mux1.out
+	0:block_1_1.func.in_b
+
+phi0_val_output->add8(add)
+	0:block_1_0.func.m_out
+	0:block_1_0.func.out
+	0:block_1_0.out
+	0:block_2_0.in0
+	0:block_2_0.TI-PE_mux0.in0
+	0:block_2_0.TI-PE_mux0.mux
+	0:block_2_0.TI-PE_mux0.out
+	0:block_2_0.func.in_a
+
+phi2_val_output->add7(add)
+	0:block_4_1.func.m_out
+	0:block_4_1.func.out
+	0:block_4_1.out
+	0:block_3_1.in2
+	0:block_3_1.TI-PE_mux1.in2
+	0:block_3_1.TI-PE_mux1.mux
+	0:block_3_1.TI-PE_mux1.out
+	0:block_3_1.func.in_b
+
+load6_val_output->add7(add)
+	0:block_1_1.func.m_out
+	0:block_1_1.func.out
+	0:block_1_1.out
+	0:block_2_1.in0
+	0:block_2_1.TI-PE_mux1.in0
+	0:block_2_1.TI-PE_mux1.mux
+	0:block_2_1.TI-PE_mux1.out
+	0:block_2_1.func.in_b
+    0:block_2_1.func.m_in_b
+    0:block_2_1.func.out
+    0:block_2_1.out
+    0:block_3_1.in0
+    0:block_3_1.TI-PE_mux0.in0
+    0:block_3_1.TI-PE_mux0.mux
+    0:block_3_1.TI-PE_mux0.out
+    0:block_3_1.func.in_a
+
+comb15_val_output->phi2(phi)
+	0:block_4_0.func.m_out
+	0:block_4_0.func.out
+	0:block_4_0.out
+	0:block_4_1.in3
+	0:block_4_1.TI-PE_mux0.in3
+	0:block_4_1.TI-PE_mux0.mux
+	0:block_4_1.TI-PE_mux0.out
+	0:block_4_1.func.in_a
+
+comb15_val_output->add12(add)
+	0:block_4_0.func.m_out
+	0:block_4_0.func.out
+	0:block_4_0.out
+	0:block_4_1.in3
+	0:block_4_1.TI-PE_mux0.in3
+	0:block_4_1.TI-PE_mux0.mux
+	0:block_4_1.TI-PE_mux0.out
+	0:block_4_1.func.in_a
+
+add7_val_output->comb15(comb)
+	0:block_3_1.func.m_out
+	0:block_3_1.func.out
+	0:block_3_1.out
+	0:block_3_0.in1
+	0:block_3_0.TI-PE_mux1.in1
+	0:block_3_0.TI-PE_mux1.mux
+	0:block_3_0.TI-PE_mux1.out
+	0:block_3_0.func.in_b
+    0:block_3_0.func.m_in_b
+    0:block_3_0.func.out
+    0:block_3_0.outyy
+    0:block_4_0.in0
+    0:block_4_0.TI-PE_mux1.in0
+    0:block_4_0.TI-PE_mux1.mux
+    0:block_4_0.TI-PE_mux1.out
+    0:block_4_0.func.in_b
+
+add8_val_output->icmp10(icmp)
+	0:block_2_0.func.m_out
+	0:block_2_0.func.out
+	0:block_2_0.out
+	0:block_3_0.in0
+	0:block_3_0.TI-PE_mux0.in0
+	0:block_3_0.TI-PE_mux0.mux
+	0:block_3_0.TI-PE_mux0.out
+	0:block_3_0.func.in_a
+
+add8_val_output->comb16(comb)
+	0:block_2_0.func.m_out
+	0:block_2_0.func.out
+	0:block_2_0.reg.in
+	0:block_2_0.reg.reg
+	0:block_2_0.reg.out
+	0:block_2_0.TI-PE_mux1.in5
+	0:block_2_0.TI-PE_mux1.mux
+	0:block_2_0.TI-PE_mux1.out
+	0:block_2_0.func.in_b
+
+icmp10_val_output->comb15(comb)
+	0:block_3_0.func.m_out
+	0:block_3_0.func.out
+	0:block_3_0.out
+	0:block_4_0.in0
+	0:block_4_0.TI-PE_mux0.in0
+	0:block_4_0.TI-PE_mux0.mux
+	0:block_4_0.TI-PE_mux0.out
+	0:block_4_0.func.in_a
+
+icmp10_val_output->comb16(comb)
+	0:block_3_0.func.m_out
+	0:block_3_0.func.out
+	0:block_3_0.out
+	0:block_2_0.in2
+	0:block_2_0.TI-PE_mux0.in2
+	0:block_2_0.TI-PE_mux0.mux
+	0:block_2_0.TI-PE_mux0.out
+	0:block_2_0.func.in_a
+
+add12_val_output->output14(output)
+	0:block_4_1.func.m_out
+	0:block_4_1.func.out
+	0:block_4_1.out
+	0:block_5_1.in
+	0:block_5_1.io.in
+	0:block_5_1.io.reg_in.in
+	0:block_5_1.io.reg_in.reg
+	0:block_5_1.io.reg_in.out
+	0:block_5_1.io.OE.in
+
+const1_val_output->phi0(phi)
+	0:block_1_0.const.out
+	0:block_1_0.TI-PE-Load_mux1.in4
+	0:block_1_0.TI-PE-Load_mux1.mux
+	0:block_1_0.TI-PE-Load_mux1.out
+	0:block_1_0.func.in_b
+
+const3_val_output->phi2(phi)
+	0:block_4_1.const.out
+	0:block_4_1.TI-PE_mux1.in4
+	0:block_4_1.TI-PE_mux1.mux
+	0:block_4_1.TI-PE_mux1.out
+	0:block_4_1.func.in_b
+
+const5_val_output->mul4(mul)
+	0:block_1_1.const.out
+	0:block_1_1.TI-PE-Load_mux0.in4
+	0:block_1_1.TI-PE-Load_mux0.mux
+	0:block_1_1.TI-PE-Load_mux0.out
+	0:block_1_1.func.in_a
+
+mul4_val_output->load6(load)
+	0:block_1_1.func.m_out
+	0:block_1_1.func.out
+	0:block_1_1.reg.in
+	0:block_1_1.reg.reg
+	0:block_1_1.reg.out
+	0:block_1_1.TI-PE-Load_mux0.in5
+	0:block_1_1.TI-PE-Load_mux0.mux
+	0:block_1_1.TI-PE-Load_mux0.out
+	0:block_1_1.func.in_a
+
+const9_val_output->add8(add)
+	0:block_2_0.const.out
+	0:block_2_0.TI-PE_mux1.in4
+	0:block_2_0.TI-PE_mux1.mux
+	0:block_2_0.TI-PE_mux1.out
+	0:block_2_0.func.in_b
+
+const11_val_output->icmp10(icmp)
+	0:block_3_0.const.out
+	0:block_3_0.TI-PE_mux1.in4
+	0:block_3_0.TI-PE_mux1.mux
+	0:block_3_0.TI-PE_mux1.out
+	0:block_3_0.func.in_b
+
+const13_val_output->add12(add)
+	0:block_4_1.const.out
+	0:block_4_1.TI-PE_mux1.in4
+	0:block_4_1.TI-PE_mux1.mux
+	0:block_4_1.TI-PE_mux1.out
+	0:block_4_1.func.in_b
+
+comb16_val_output->phi0(phi)
+	0:block_2_0.func.m_out
+	0:block_2_0.func.out
+	0:block_2_0.out
+	0:block_1_0.in2
+	0:block_1_0.TI-PE-Load_mux0.in2
+	0:block_1_0.TI-PE-Load_mux0.mux
+	0:block_1_0.TI-PE-Load_mux0.out
+	0:block_1_0.func.in_a
+[INFO] Optimal CGRA Mapping Found
+MapperTimeout: 0
+Mapped: 1
